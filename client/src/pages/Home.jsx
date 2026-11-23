@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Scene from '../components/three/Scene'
-import TvRobot from '../components/three/TvRobot'
+import TvRobot from '../components/three/robot/TvRobot'
 import { useCharacters } from '../hooks/useCharacters'
 
 /**
@@ -25,7 +25,7 @@ export default function Home() {
     <main className="relative h-screen w-full bg-gradient-to-b from-neutral-300 to-neutral-400">
       <Scene>
         {/* key muda → React recria o robô (útil quando trocar de modelo) */}
-        <TvRobot key={atual.id} character={atual} position={[1.5, 0.2, 0]} />
+        <TvRobot key={atual.id} character={atual} position={[1.7, 0.35, 0]} />
       </Scene>
 
       {/* Camada de HTML por cima do canvas */}

@@ -55,7 +55,7 @@ export const charactersSeed = [
     ],
   },
    {
-    id: 'core',
+    id: 'pixel',
     name: 'PIXEL',
     role: 'Design & UI',
     bodyColor: '#e7cff7',
@@ -64,6 +64,7 @@ export const charactersSeed = [
     lines: [
   { id: 'pixel-1', order: 1, type: 'askName', text: 'Antes do código vem o design. Qual seu nome?', placeholder: 'Seu nome' },
   { id: 'pixel-2', order: 2, type: 'question', text: '{name}, você já tem identidade visual?', placeholder: 'Sim / Não' },
-  { id: 'pixel-3', order: 3, type: 'cta', text: 'Fechado. Eu levo sua marca do Figma até o ar.', ctaLabel: 'Ver portfólio', ctaHref: '#contat'},
+  { id: 'pixel-3', order: 3, type: 'cta', text: 'Fechado. Eu levo sua marca do Figma até o ar.', ctaLabel: 'Ver portfólio', ctaHref: '#contato'},
       ],
    },
+]
