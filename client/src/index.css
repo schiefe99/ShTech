@@ -6,3 +6,24 @@ body,
   margin: 0;
   height: 100%;
 }
+
+/* Galeria em loop (DemoMarquee): anda de 0 até -50% (metade = 1 cópia) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 45s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused; /* pausa ao passar o mouse */
+}
+/* bordas da galeria somem num degradê */
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* Robô da página de serviço: bordas do canvas somem num degradê radial */
+.robot-fade {
+  mask-image: radial-gradient(ellipse 50% 52% at 55% 42%, black 45%, transparent 100%);
+}

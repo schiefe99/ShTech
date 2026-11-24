@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import CrtTv from './CrtTv'
@@ -6,45 +6,100 @@ import Bust from './Bust'
 import Cables from './Cables'
 
 /**
- * TV ROBOT — monta o personagem juntando as peças:
+ * Cor da blusa a partir da cor dos olhos.
+ * Cor neon pura em tecido parece plástico, então misturamos um pouco
+ * de cinza (FABRIC_MIX = 0 → cor pura, 1 → cinza total).
+ */
+const FABRIC_MIX = 0.2
+const fabricColor = (hex) =>
+  '#' + new THREE.Color(hex).lerp(new THREE.Color('#8f8f8f'), FABRIC_MIX).getHexString()
+
+/**
+ * Movimento — ajuste fino aqui:
+ *   head  → quanto a CABEÇA gira seguindo o mouse
+ *   body  → quanto o CORPO acompanha (fração do giro da cabeça)
+ *   lag   → quanto o corpo "atrasa" (menor = mais preguiçoso)
+ *   tilt  → inclinação de repouso da cabeça (charme, como na referência)
+ */
+const MOTION = {
+  head: { y: 0.65, x: 0.38 }, // giro máximo (radianos): 0.65 ≈ 37° para os lados
+  body: { y: 0.35, z: 0.07 },
+  lag: { head: 7, body: 2.8 }, // maior = reage mais rápido
+  tilt: -0.06,
+  breath: { speed: 1.1, amount: 0.022 },
+}
+
+/**
+ * TV ROBOT — monta o personagem:
  *
- *   <group>             ← posição/escala vindas de fora (props)
- *     <Bust />          ← corpo (parado)
- *     <Cables />        ← fios (parados, presos ao corpo)
- *     <group head>      ← cabeça: gira seguindo o mouse
- *       <CrtTv />
- *
- * Props:
- *   character → { bodyColor, eyeColor } vindo do service
- *   active    → se é o personagem em destaque
+ *   <group>                 ← posição vinda de fora (roda/página)
+ *     <group body>          ← CORPO: acompanha a cabeça com atraso + respira
+ *       <Bust />
+ *       <Cables />          ← fios com física (simulados no espaço do corpo)
+ *       <group head>        ← CABEÇA: gira a partir do pescoço
+ *         <group tv>        ← (ref usada pelos fios para saber onde a TV está)
+ *           <CrtTv />
  */
 export default function TvRobot({ character, active = true, ...props }) {
-  const { bodyColor, eyeColor } = character
+  const { bodyColor, eyeColor, shirtColor } = character
+  const blusa = shirtColor ?? fabricColor(eyeColor)
+
+  const body = useRef()
   const head = useRef()
+  const tv = useRef()
+
+  // Sombras: toda malha do robô projeta e recebe sombra
+  // (cabo sombreando o ombro, TV sombreando o pescoço...)
+  useLayoutEffect(() => {
+    body.current.traverse((obj) => {
+      if (obj.isMesh) {
+        obj.castShadow = true
+        obj.receiveShadow = true
+      }
+    })
+  }, [])
+
+  // cada robô "respira" num ritmo levemente diferente
+  const phase = useMemo(() => Math.random() * Math.PI * 2, [])
 
   useFrame((state, delta) => {
-    const t = state.clock.elapsedTime
+    const t = state.clock.elapsedTime + phase
+    const { pointer } = state
+    const damp = THREE.MathUtils.damp
 
-    // Movimento sutil: segue o mouse + "respiração" (seno lento)
-    const alvoY = active ? state.pointer.x * 0.3 : 0
-    const alvoX = active ? -state.pointer.y * 0.15 : 0
-    const respiracao = Math.sin(t * 1.2) * 0.015
+    // alvo do olhar: mouse quando ativo; um "olhar distraído" quando não
+    const lookX = active ? pointer.x : Math.sin(t * 0.25) * 0.25
+    const lookY = active ? pointer.y : Math.sin(t * 0.18) * 0.15
 
-    head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, alvoY, 3, delta)
-    head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, alvoX, 3, delta)
-    head.current.position.y = respiracao
+    // CORPO: gira menos e mais devagar que a cabeça (inércia)
+    body.current.rotation.y = damp(body.current.rotation.y, lookX * MOTION.head.y * MOTION.body.y, MOTION.lag.body, delta)
+    body.current.rotation.z = damp(body.current.rotation.z, -lookX * MOTION.body.z, MOTION.lag.body, delta)
+    // respiração: sobe/desce de leve
+    body.current.position.y = Math.sin(t * MOTION.breath.speed) * MOTION.breath.amount
+
+    // CABEÇA: completa o giro (relativo ao corpo, que já girou um pouco)
+    head.current.rotation.y = damp(head.current.rotation.y, lookX * MOTION.head.y * (1 - MOTION.body.y), MOTION.lag.head, delta)
+    head.current.rotation.x = damp(head.current.rotation.x, -lookY * MOTION.head.x, MOTION.lag.head, delta)
+    head.current.rotation.z = damp(
+      head.current.rotation.z,
+      MOTION.tilt + Math.sin(t * 0.6) * 0.015,
+      MOTION.lag.head,
+      delta
+    )
   })
 
   return (
     <group {...props}>
-      <Bust />
-      <Cables />
+      <group ref={body}>
+        <Bust color={blusa} />
+        <Cables tvRef={tv} bodyRef={body} />
 
-      {/* Rotação a partir da base da cabeça (pescoço), não do centro */}
-      <group position={[0, -0.75, 0]}>
-        <group ref={head}>
-          <group position={[0, 0.75, 0]}>
-            <CrtTv frameColor={bodyColor} eyeColor={eyeColor} active={active} />
+        {/* pivô no pescoço: a cabeça gira a partir da base, não do centro */}
+        <group position={[0, -0.75, 0]}>
+          <group ref={head}>
+            <group ref={tv} position={[0, 0.75, 0]}>
+              <CrtTv frameColor={bodyColor} eyeColor={eyeColor} active={active} />
+            </group>
           </group>
         </group>
       </group>

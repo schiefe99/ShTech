@@ -33,7 +33,7 @@ const EYE = {
 const PUPIL = {
   radius: 34,
   dot: 5, // espaçamento da grade de pontinhos
-  range: { x: 26, y: 16 }, // quanto a pupila anda com o mouse (px)
+  range: { x: 40, y: 28 }, // quanto a pupila anda com o mouse (px)
 }
 
 const BLINK_DURATION = 0.16
@@ -68,17 +68,28 @@ export function useScreenTexture({ eyeColor = '#e8f1ff', active = true }) {
     pupil: { x: 0, y: 0 },
     blink: { timer: 0, next: randomDelay() },
     time: 0,
+    power: active ? 1 : 0.25, // brilho da tela: 1 = ativo, 0.25 = "em espera"
+    frame: 0,
   })
 
   useFrame((state, delta) => {
     const a = anim.current
     a.time += delta
 
+    // tela acende/apaga suavemente quando o robô vira o ativo
+    a.power = THREE.MathUtils.damp(a.power, active ? 1 : 0.25, 3, delta)
+
+    // PERFORMANCE: robô em espera (tela já apagada) redesenha só
+    // 1 a cada 8 frames. Desenhar 4 canvases a 60fps pesa no processador.
+    a.frame++
+    const emEspera = !active && a.power < 0.27
+    if (emEspera && a.frame % 8 !== 0) return
+
     // ---------- pupila segue o mouse (suavizado) ----------
     const alvoX = active ? state.pointer.x * PUPIL.range.x : 0
     const alvoY = active ? -state.pointer.y * PUPIL.range.y : 0 // canvas: y cresce pra baixo
-    a.pupil.x = THREE.MathUtils.damp(a.pupil.x, alvoX, 8, delta)
-    a.pupil.y = THREE.MathUtils.damp(a.pupil.y, alvoY, 8, delta)
+    a.pupil.x = THREE.MathUtils.damp(a.pupil.x, alvoX, 14, delta)
+    a.pupil.y = THREE.MathUtils.damp(a.pupil.y, alvoY, 14, delta)
 
     // ---------- piscada ----------
     const b = a.blink
@@ -109,6 +120,7 @@ export function useScreenTexture({ eyeColor = '#e8f1ff', active = true }) {
     drawScanlines(ctx, a.time)
     drawNoise(ctx)
     drawVignette(ctx)
+    drawPowerDim(ctx, a.power)
 
     // avisa o three.js que o canvas mudou
     texture.needsUpdate = true
@@ -241,6 +253,14 @@ function drawVignette(ctx) {
   g.addColorStop(0, 'rgba(0,0,0,0)')
   g.addColorStop(1, 'rgba(0,0,0,0.75)')
   ctx.fillStyle = g
+  ctx.fillRect(0, 0, W, H)
+}
+
+// escurece a tela inteira conforme o "power" (robôs inativos)
+function drawPowerDim(ctx, power) {
+  if (power > 0.99) return
+  ctx.globalCompositeOperation = 'source-over'
+  ctx.fillStyle = `rgba(0, 0, 0, ${(1 - power) * 0.85})`
   ctx.fillRect(0, 0, W, H)
 }
 
