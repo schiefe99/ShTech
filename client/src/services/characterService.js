@@ -1,4 +1,4 @@
-import { createLocalService } from './createLocalService'
+import { createService } from './createService'
 import { charactersSeed } from '../data/characters.seed'
 
 /**
@@ -6,7 +6,7 @@ import { charactersSeed } from '../data/characters.seed'
  * version 2: o seed ganhou tagline, intro e benefits (página do serviço).
  * version 3: o link do WhatsApp do LUMA passou a usar o número do config.js.
  */
-export const characterService = createLocalService({
+export const characterService = createService({
   key: 'characters',
   seed: charactersSeed,
   version: 3,

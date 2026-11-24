@@ -30,8 +30,12 @@ export default function ServicePage() {
   const { plans } = usePlans()
   const [demoAberta, setDemoAberta] = useState(null)
 
-  // Ao entrar na página, volta para o topo
-  useEffect(() => window.scrollTo(0, 0), [id])
+  // Ao entrar na página, volta para o topo.
+  // CHAVES { } são obrigatórias aqui: sem elas a arrow function RETORNA
+  // o resultado de scrollTo, e o React acha que é uma função de limpeza.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [id])
 
   if (loading) return <p className="p-8">Carregando...</p>
 

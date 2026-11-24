@@ -55,7 +55,8 @@ export function createLocalService({ key, seed, version = 1 }) {
     /** CREATE */
     async create(data) {
       const all = read()
-      const novo = { order: all.length + 1, ...data, id: crypto.randomUUID() }
+      // aceita id "bonito" (ex.: 'luma') ou gera um, igual à API
+      const novo = { order: all.length + 1, ...data, id: data.id || crypto.randomUUID() }
       write([...all, novo])
       return novo
     },

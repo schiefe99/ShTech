@@ -1,0 +1,59 @@
+import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import CharactersAdmin from './CharactersAdmin'
+import DemosAdmin from './DemosAdmin'
+import PlansAdmin from './PlansAdmin'
+import { SITE } from '../../config'
+
+/**
+ * ADMIN — /admin/*
+ * Rotas ANINHADAS: este componente cuida de tudo que vem depois de /admin
+ *   /admin              → redireciona para /admin/personagens
+ *   /admin/personagens  → CRUD de personagens
+ *   /admin/demos        → CRUD de demos
+ *   /admin/planos       → CRUD de planos
+ *
+ * ⚠️ Ainda sem senha — no Dia 5 protegemos esta área.
+ */
+const tabs = [
+  { to: 'personagens', label: 'Personagens' },
+  { to: 'demos', label: 'Demos' },
+  { to: 'planos', label: 'Planos' },
+]
+
+export default function AdminLayout() {
+  return (
+    <div className="min-h-screen bg-neutral-950 text-white">
+      <header className="flex flex-wrap items-center gap-6 border-b border-white/10 px-6 py-4 md:px-10">
+        <span className="text-lg font-medium">
+          {SITE.name}® <span className="font-mono text-xs uppercase tracking-widest text-neutral-500">admin</span>
+        </span>
+
+        <nav className="flex gap-1">
+          {tabs.map((t) => (
+            // NavLink sabe se é a rota atual → isActive muda o estilo
+            <NavLink
+              key={t.to}
+              to={t.to}
+              className={({ isActive }) =>
+                `rounded-full px-4 py-1.5 text-sm transition ${isActive ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'}`
+              }
+            >
+              {t.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <Link to="/" className="ml-auto text-sm text-neutral-400 hover:text-white">Ver site ↗</Link>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-6 py-10 md:px-10">
+        <Routes>
+          <Route index element={<Navigate to="personagens" replace />} />
+          <Route path="personagens" element={<CharactersAdmin />} />
+          <Route path="demos" element={<DemosAdmin />} />
+          <Route path="planos" element={<PlansAdmin />} />
+        </Routes>
+      </main>
+    </div>
+  )
+}
