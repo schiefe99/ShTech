@@ -7,13 +7,18 @@ const brl = (n) =>
 /**
  * Card de plano (Nº004).
  * demosInclusas: quantas demos deste serviço entram na assinatura
+ * onSelect (opcional): se vier, o botão ESCOLHE o plano (jornada da TV)
+ *                      em vez de abrir o WhatsApp direto
+ * selected: este plano já foi escolhido (mostra "✓ Escolhido")
  */
-export default function PlanCard({ plan, character, demosInclusas = 0 }) {
+export default function PlanCard({ plan, character, demosInclusas = 0, onSelect, selected = false }) {
   const destaque = plan.highlight
   const mensagem = `Olá! Tenho interesse no plano "${plan.name}" para ${character.role}.`
+  const btnClass = destaque ? 'bg-black text-white hover:bg-black/80' : 'bg-white text-black hover:bg-white/90'
 
   return (
     <div
+      style={selected ? { boxShadow: `0 0 0 3px ${character.eyeColor}` } : undefined}
       className={`flex flex-col rounded-3xl p-8 ${
         destaque ? 'bg-white text-black' : 'border border-white/15 bg-white/[0.03]'
       }`}
@@ -62,16 +67,23 @@ export default function PlanCard({ plan, character, demosInclusas = 0 }) {
         ))}
       </ul>
 
-      <a
-        href={whatsappLink(mensagem)}
-        target="_blank"
-        rel="noreferrer"
-        className={`mt-10 rounded-full px-6 py-3 text-center font-medium transition ${
-          destaque ? 'bg-black text-white hover:bg-black/80' : 'bg-white text-black hover:bg-white/90'
-        }`}
-      >
-        {plan.ctaLabel}
-      </a>
+      {onSelect ? (
+        <button
+          onClick={() => onSelect(plan)}
+          className={`mt-10 rounded-full px-6 py-3 text-center font-medium transition ${btnClass}`}
+        >
+          {selected ? '✓ Plano escolhido' : 'Escolher este plano'}
+        </button>
+      ) : (
+        <a
+          href={whatsappLink(mensagem)}
+          target="_blank"
+          rel="noreferrer"
+          className={`mt-10 rounded-full px-6 py-3 text-center font-medium transition ${btnClass}`}
+        >
+          {plan.ctaLabel}
+        </a>
+      )}
     </div>
   )
 }

@@ -6,53 +6,39 @@
  *          description, features, inSubscription, accent)
  *
  * characterId     → a qual serviço/robô a demo pertence (chave estrangeira)
- * url             → site no ar (null = "em breve")
+ * url             → '/layout/<key>' para um layout pronto
+ *                   (null = não aparece no canal Layouts)
  * thumbnail       → imagem em /public (opcional; sem ela o card usa gradiente)
  * inSubscription  → true = disponível no plano de Assinatura
  * accent          → cor do card quando não há thumbnail
  */
+// ".js" no final: este arquivo também é lido pelo servidor (Node exige a extensão)
+import { LAYOUTS } from './layoutPresets.js'
+
+/**
+ * Cada layout pronto vira uma demo do LUMA com url '/layout/<key>':
+ * o site reconhece esse formato e mostra a prévia AO VIVO personalizada.
+ */
+function layoutDemos() {
+  return LAYOUTS.map((l, i) => ({
+    id: `layout-${l.key}`,
+    characterId: 'luma',
+    order: i + 1,
+    title: l.label,
+    niche: l.tag,
+    url: `/layout/${l.key}`,
+    thumbnail: null,
+    description: l.description,
+    features: l.features,
+    inSubscription: true,
+    accent: l.accent,
+  }))
+}
+
 export const demosSeed = [
   // ---------- LUMA · Landing Pages ----------
-  {
-    id: 'demo-mallu',
-    characterId: 'luma',
-    order: 1,
-    title: 'Mallu Soluções',
-    niche: 'Consultoria empresarial',
-    url: 'https://mallusolucoes.com.br',
-    thumbnail: null,
-    description:
-      'Landing page institucional com animações no scroll, apresentação de serviços e contato direto. Ideal para empresas de serviços B2B.',
-    features: ['Animações no scroll', 'Seções de serviços', 'Botão de WhatsApp', 'SEO básico'],
-    inSubscription: true,
-    accent: '#3b5bdb',
-  },
-  {
-    id: 'demo-estetica',
-    characterId: 'luma',
-    order: 2,
-    title: 'Studio Beleza',
-    niche: 'Estética e beleza',
-    url: null,
-    thumbnail: null,
-    description: 'Página com galeria de antes/depois, lista de procedimentos e agendamento pelo WhatsApp.',
-    features: ['Galeria', 'Tabela de serviços', 'Agendamento via WhatsApp'],
-    inSubscription: true,
-    accent: '#d6336c',
-  },
-  {
-    id: 'demo-restaurante',
-    characterId: 'luma',
-    order: 3,
-    title: 'Sabor da Casa',
-    niche: 'Restaurantes e delivery',
-    url: null,
-    thumbnail: null,
-    description: 'Cardápio visual, horário de funcionamento, mapa e pedido direto no WhatsApp.',
-    features: ['Cardápio', 'Mapa', 'Pedido via WhatsApp'],
-    inSubscription: true,
-    accent: '#e8590c',
-  },
+  // os 3 layouts prontos (vêm do app de prospecção) — gerados acima
+  ...layoutDemos(),
 
   // ---------- KART · E-commerce ----------
   {

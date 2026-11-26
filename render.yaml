@@ -1,0 +1,34 @@
+# Deploy da API no Render (render.com) — lido automaticamente ao criar
+# um "Blueprint" a partir do repositório.
+#
+# Por que não a Vercel? A Vercel roda o código em funções que NÃO guardam
+# arquivos: o banco SQLite (server/shtech.db) seria apagado a cada acesso.
+# Aqui a API roda sempre ligada e o banco fica num DISCO persistente.
+#
+# ⚠ Disco persistente só existe em plano pago (Starter). No plano grátis o
+#   banco volta para o seed a cada deploy/reinício (as edições do admin somem).
+services:
+  - type: web
+    name: shtech-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    plan: starter
+    disk:
+      name: shtech-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /var/data/shtech.db
+      # os 3 abaixo você preenche no painel (não ficam no repositório)
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false

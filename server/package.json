@@ -6,11 +6,16 @@
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
-    "seed": "node src/seed.js"
+    "seed": "node src/seed.js",
+    "seed:layouts": "node src/seed.js --layouts",
+    "hash-senha": "node scripts/hash-senha.js"
   },
   "dependencies": {
     "better-sqlite3": "^12.4.1",
     "cors": "^2.8.5",
     "express": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=20.12"
   }
 }

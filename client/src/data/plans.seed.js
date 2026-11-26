@@ -15,7 +15,7 @@ export const plansSeed = [
     type: 'subscription',
     name: 'Assinatura',
     tagline: 'Seu site no ar rápido, sem investimento inicial alto.',
-    price: null,
+    price: 250,
     pricePrefix: '',
     period: 'mês',
     features: [

@@ -19,6 +19,8 @@
  *   tagline  → título grande do topo
  *   intro    → texto da seção Nº001
  *   benefits → cards da seção Nº003
+ *   process  → etapas do canal "Como funciona" [{ time, title, text }]
+ *              (sem process → a TV usa as etapas padrão)
  *
  * ⚠️ Mudou este arquivo? Aumente `version` em services/characterService.js
  *    para o navegador carregar o seed novo.
@@ -35,10 +37,16 @@ export const charactersSeed = [
     intro:
       'A maioria dos pequenos negócios depende só do Instagram — e perde cliente que procura no Google ou quer entender o serviço antes de chamar. Uma landing page rápida, bonita e com o botão certo no lugar certo transforma visita em conversa no WhatsApp.',
     benefits: [
-      { title: 'No ar em dias', text: 'Partindo de um layout da galeria, seu site fica pronto rápido.' },
+      { title: 'Pronto em até 36h', text: 'Com o briefing completo, seu site sai do papel em até 36 horas.' },
       { title: 'Feita para converter', text: 'Cada seção leva o visitante até o botão de contato.' },
       { title: 'Rápida no celular', text: 'Leve, responsiva e otimizada para quem chega pelo Instagram.' },
       { title: 'Você no controle', text: 'Textos, fotos e preços atualizados sempre que precisar.' },
+    ],
+    process: [
+      { time: 'Hora 0', title: 'Briefing', text: 'Você me envia o essencial: logo, textos, fotos e o objetivo da página.' },
+      { time: 'Até 36h', title: 'Desenvolvimento', text: 'Com o briefing completo, sua landing page fica pronta em até 36 horas.' },
+      { time: 'Ajustes', title: 'Revisão', text: 'Você confere tudo e ajustamos os detalhes rapidinho.' },
+      { time: 'No ar', title: 'Deploy', text: 'Publico no seu domínio, com HTTPS, e o site já está pronto para receber clientes.' },
     ],
     lines: [
       { id: 'luma-1', order: 1, type: 'askName', text: 'Oi! Vi que você chegou com uma ideia na cabeça. Como posso te chamar?', placeholder: 'Seu nome' },

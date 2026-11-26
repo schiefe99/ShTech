@@ -7,14 +7,21 @@
  * (proxy no vite.config.js). Em produção, defina VITE_API_URL com o
  * endereço da API (ex.: https://shtech-api.onrender.com/api).
  */
+import { getToken, logout } from './auth'
+
 const BASE = import.meta.env.VITE_API_URL ?? '/api'
 
 async function request(path, options = {}) {
   let res
   try {
+    const token = getToken()
     res = await fetch(BASE + path, {
-      headers: { 'Content-Type': 'application/json' },
       ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        // logado no admin? manda o token (a API exige para gravar)
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     })
   } catch {
     // fetch só "falha" quando nem chegou no servidor (desligado, sem rede)
@@ -22,6 +29,7 @@ async function request(path, options = {}) {
   }
 
   if (res.status === 204) return null // DELETE não devolve corpo
+  if (res.status === 401 && getToken()) logout() // token venceu → volta para a tela de login
 
   const data = await res.json().catch(() => null)
   // erro HTTP (400, 404, 500...): usa a mensagem que a API mandou

@@ -1,7 +1,8 @@
-import { useMemo } from 'react'
-import { RoundedBox } from '@react-three/drei'
+import { useEffect, useMemo } from 'react'
+import { RoundedBox, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { useScreenTexture } from './useScreenTexture'
+import { screens } from './screenRegistry'
 
 /**
  * CRT TV — a cabeça do robô.
@@ -14,8 +15,14 @@ import { useScreenTexture } from './useScreenTexture'
  */
 const SCREEN = { w: 1.72, h: 1.29, bulge: 0.06 }
 
-export default function CrtTv({ frameColor = '#c4c4c4', eyeColor, active }) {
+export default function CrtTv({ id, frameColor = '#c4c4c4', eyeColor, active, onEnter, onButtonHover }) {
   const texture = useScreenTexture({ eyeColor, active })
+
+  // botão sumiu (ex.: clicou e entrou na TV) com o cursor em cima →
+  // o "pointerleave" nunca dispara; avisamos manualmente que saiu
+  useEffect(() => {
+    if (!onEnter) onButtonHover?.(false)
+  }, [onEnter, onButtonHover])
 
   // Tela levemente abaulada, como vidro de TV de tubo:
   // empurra cada vértice no eixo Z, mais no centro e menos nas bordas
@@ -45,7 +52,12 @@ export default function CrtTv({ frameColor = '#c4c4c4', eyeColor, active }) {
 
       {/* Tela: meshBasicMaterial não reage à luz (a tela "emite" luz)
           toneMapped={false} deixa o branco passar de 1 → o Bloom pega */}
-      <mesh geometry={screenGeometry} position={[0, 0.06, 0.615]}>
+      {/* ref de função: registra a tela (para a câmera achar) e remove ao sair */}
+      <mesh
+        geometry={screenGeometry}
+        position={[0, 0.06, 0.615]}
+        ref={(mesh) => (mesh ? screens.set(id, mesh) : screens.delete(id))}
+      >
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
 
@@ -65,6 +77,25 @@ export default function CrtTv({ frameColor = '#c4c4c4', eyeColor, active }) {
       <RoundedBox args={[1.95, 1.55, 1.05]} radius={0.18} smoothness={4} position={[0, 0, -0.2]}>
         <meshStandardMaterial color="#1a1a1d" metalness={0.4} roughness={0.6} />
       </RoundedBox>
+
+      {/* Botão "ENTRAR NA TV" impresso na moldura, à esquerda dos LEDs.
+          <Html transform> prende um elemento HTML neste ponto do 3D:
+          ele gira/inclina junto com a TV (parece parte do aparelho).
+          Só aparece no robô ativo (quando a Home passa onEnter). */}
+      {onEnter && (
+        <Html transform position={[-0.05, -0.712, 0.62]} scale={0.1} zIndexRange={[10, 0]}>
+          <button
+            onClick={onEnter}
+            onPointerEnter={() => onButtonHover?.(true)}
+            onPointerLeave={() => onButtonHover?.(false)}
+            className="tv-enter-btn"
+            style={{ '--tv-accent': eyeColor }}
+          >
+            <span className="tv-enter-dot" />
+            ENTRAR NA TV
+          </button>
+        </Html>
+      )}
 
       {/* LEDs: o primeiro aceso */}
       {[0, 1, 2, 3, 4, 5].map((i) => (

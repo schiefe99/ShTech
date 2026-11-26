@@ -15,6 +15,7 @@ const emptyCharacter = () => ({
   tagline: '',
   intro: '',
   benefits: [],
+  process: [],
   lines: [
     { type: 'askName', text: 'Oi! Como posso te chamar?', placeholder: 'Seu nome' },
     { type: 'question', text: '{name}, me conta sobre o seu negócio.', placeholder: '' },

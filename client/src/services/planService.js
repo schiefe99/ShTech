@@ -5,5 +5,5 @@ import { plansSeed } from '../data/plans.seed'
 export const planService = createService({
   key: 'plans',
   seed: plansSeed,
-  version: 1,
+  version: 2,
 })

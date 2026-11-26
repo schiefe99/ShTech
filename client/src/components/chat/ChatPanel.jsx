@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useConversation } from '../../hooks/useConversation'
 import { useTypewriter } from '../../hooks/useTypewriter'
 
 /**
  * CHAT PANEL — a conversa estilo Lisa, do lado esquerdo da tela.
  * Só cuida da INTERFACE; a lógica fica nos hooks.
+ *
+ * onOpenTv(whatsHref) → entra na TV do robô. Ao fim da conversa,
+ * passa junto o link do WhatsApp já montado com as respostas.
  */
-export default function ChatPanel({ character, visitorName, onNameChange }) {
+export default function ChatPanel({ character, visitorName, onNameChange, onOpenTv }) {
   const { current, text, answer, isFinished, ctaHref } = useConversation(character, {
     visitorName,
     onNameChange,
@@ -30,12 +32,6 @@ export default function ChatPanel({ character, visitorName, onNameChange }) {
         {character.role}
       </p>
       <h1 className="mt-1 text-5xl font-semibold tracking-tight">{character.name}</h1>
-      <Link
-        to={`/servico/${character.id}`}
-        className="mt-2 inline-block font-mono text-xs uppercase tracking-widest text-neutral-600 hover:text-neutral-900"
-      >
-        Conhecer o serviço →
-      </Link>
 
       {/* clicar no texto pula a digitação */}
       <p
@@ -69,16 +65,24 @@ export default function ChatPanel({ character, visitorName, onNameChange }) {
         </form>
       )}
 
-      {/* Fim da conversa: botão de ação */}
+      {/* Fim da conversa: entra na TV (o WhatsApp vai junto, no último canal) */}
       {done && isFinished && (
-        <a
-          href={ctaHref}
-          target={ctaHref?.startsWith('http') ? '_blank' : undefined}
-          rel="noreferrer"
-          className="mt-8 inline-block rounded-full bg-neutral-900 px-7 py-3 text-white transition hover:bg-neutral-700"
-        >
-          {current.ctaLabel ?? 'Continuar'}
-        </a>
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <button
+            onClick={() => onOpenTv(ctaHref)}
+            className="rounded-full bg-neutral-900 px-7 py-3 text-white transition hover:bg-neutral-700"
+          >
+            Ver como funciona ▸
+          </button>
+          <a
+            href={ctaHref}
+            target={ctaHref?.startsWith('http') ? '_blank' : undefined}
+            rel="noreferrer"
+            className="text-sm text-neutral-600 underline-offset-4 hover:text-neutral-900 hover:underline"
+          >
+            {current.ctaLabel ?? 'ou falar agora'}
+          </a>
+        </div>
       )}
     </div>
   )

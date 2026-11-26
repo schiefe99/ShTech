@@ -31,8 +31,8 @@ const lineRepo = createRepository({
 
 const baseCharacterRepo = createRepository({
   table: 'characters',
-  columns: ['name', 'role', 'bodyColor', 'eyeColor', 'shirtColor', 'order', 'tagline', 'intro', 'benefits'],
-  json: ['benefits'],
+  columns: ['name', 'role', 'bodyColor', 'eyeColor', 'shirtColor', 'order', 'tagline', 'intro', 'benefits', 'process'],
+  json: ['benefits', 'process'],
 })
 
 // ---------- personagem + falas ----------

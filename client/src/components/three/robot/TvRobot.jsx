@@ -40,7 +40,7 @@ const MOTION = {
  *         <group tv>        ← (ref usada pelos fios para saber onde a TV está)
  *           <CrtTv />
  */
-export default function TvRobot({ character, active = true, ...props }) {
+export default function TvRobot({ character, active = true, focus = false, onEnter, ...props }) {
   const { bodyColor, eyeColor, shirtColor } = character
   const blusa = shirtColor ?? fabricColor(eyeColor)
 
@@ -62,14 +62,29 @@ export default function TvRobot({ character, active = true, ...props }) {
   // cada robô "respira" num ritmo levemente diferente
   const phase = useMemo(() => Math.random() * Math.PI * 2, [])
 
+  // TRAVA DO OLHAR: cursor em cima da TV (ou do botão) → a cabeça para,
+  // para o botão "ENTRAR NA TV" não fugir do mouse.
+  // Duas fontes (a malha da TV e o botão HTML) → travado se QUALQUER uma
+  // estiver com o cursor em cima.
+  const hover = useRef({ tv: false, button: false })
+  const look = useRef({ x: 0, y: 0 }) // último alvo do olhar (fica congelado)
+  const setHover = (part, value) => (hover.current[part] = value)
+
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime + phase
     const { pointer } = state
     const damp = THREE.MathUtils.damp
 
     // alvo do olhar: mouse quando ativo; um "olhar distraído" quando não
-    const lookX = active ? pointer.x : Math.sin(t * 0.25) * 0.25
-    const lookY = active ? pointer.y : Math.sin(t * 0.18) * 0.15
+    // focus = a câmera está entrando na TV → olha RETO para ela
+    const travado = active && (hover.current.tv || hover.current.button)
+    if (!travado) {
+      look.current.x = focus ? 0 : active ? pointer.x : Math.sin(t * 0.25) * 0.25
+      look.current.y = focus ? 0 : active ? pointer.y : Math.sin(t * 0.18) * 0.15
+    }
+    // travado: look mantém o último valor → os damps abaixo "chegam" nele e param
+    const lookX = look.current.x
+    const lookY = look.current.y
 
     // CORPO: gira menos e mais devagar que a cabeça (inércia)
     body.current.rotation.y = damp(body.current.rotation.y, lookX * MOTION.head.y * MOTION.body.y, MOTION.lag.body, delta)
@@ -82,7 +97,7 @@ export default function TvRobot({ character, active = true, ...props }) {
     head.current.rotation.x = damp(head.current.rotation.x, -lookY * MOTION.head.x, MOTION.lag.head, delta)
     head.current.rotation.z = damp(
       head.current.rotation.z,
-      MOTION.tilt + Math.sin(t * 0.6) * 0.015,
+      focus ? 0 : MOTION.tilt + Math.sin(t * 0.6) * 0.015,
       MOTION.lag.head,
       delta
     )
@@ -97,8 +112,21 @@ export default function TvRobot({ character, active = true, ...props }) {
         {/* pivô no pescoço: a cabeça gira a partir da base, não do centro */}
         <group position={[0, -0.75, 0]}>
           <group ref={head}>
-            <group ref={tv} position={[0, 0.75, 0]}>
-              <CrtTv frameColor={bodyColor} eyeColor={eyeColor} active={active} />
+            {/* eventos do R3F: o raio do mouse acertou alguma malha da TV */}
+            <group
+              ref={tv}
+              position={[0, 0.75, 0]}
+              onPointerOver={() => setHover('tv', true)}
+              onPointerOut={() => setHover('tv', false)}
+            >
+              <CrtTv
+                id={character.id}
+                frameColor={bodyColor}
+                eyeColor={eyeColor}
+                active={active}
+                onEnter={onEnter}
+                onButtonHover={(v) => setHover('button', v)}
+              />
             </group>
           </group>
         </group>

@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>§NOME§ — Barbearia em §CIDADE§</title>
+<meta name="description" content="Barbearia com atendimento no horário marcado, profissionais experientes e ambiente que você quer voltar.">
+<meta property="og:title" content="§NOME§">
+<meta property="og:description" content="Barbearia com atendimento no horário marcado, profissionais experientes e ambiente que você quer voltar.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Tema "mallu-azul-vermelho" (layout "mallu" da barbearia, fontes da Mallu): marinho quase preto,
+   vermelho na acao e azul royal no fim do gradiente, secoes claras azul-gelo. Alem dos tokens
+   genericos, o layout mallu precisa de --accent-2, --accent-deep, --accent-rgb, --ink/--ink-rgb/--ink-dim,
+   --light/--light-muted, --text-soft, --panel-a/--panel-b e --grad. */
+:root {
+  --bg: #0a0f1f;
+  --bg-deep: #060a16;
+  --bg-green: #0f1d44;    /* fim do gradiente (nome herdado do layout) */
+  --bg-2: #111a33;
+  --surface: #111a33;
+  --surface-hi: #18244a;
+  --line: rgba(255, 255, 255, .1);
+  --line-hi: rgba(255, 255, 255, .22);
+  --text: #ffffff;
+  --text-dim: #a3b0cf;
+  --text-soft: #dfe6f7;
+  --faint: #6b7aa3;
+  --accent: #e5383b;      /* vermelho da marca */
+  --accent-2: #3b74ff;    /* azul de apoio */
+  --accent-deep: #c4262a;
+  --accent-hover: #f25255;
+  --accent-ink: #ffffff;
+  --accent-soft: #fde7e7;
+  --accent-soft-ink: #c4262a;
+  --accent-rgb: 229 56 59;
+  --muted: #4a5a85;
+  --off: #ff8a7a;         /* status "fechado" */
+  --light: #eef2fb;
+  --light-muted: #a9b4cf;
+  --ink: #0a0f1f;
+  --ink-dim: #4f5d7e;
+  --ink-rgb: 10 15 31;
+  --panel-a: #17244d;
+  --panel-b: #0d1530;
+  --grad: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+
+  --f-display: "Montserrat", system-ui, sans-serif;
+  --f-body: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r: 18px;
+  --gutter: 16px;
+  --max: 1200px;
+  color-scheme: dark;
+}
+
+body { background-color: var(--bg); }
+
+/* Base comum das demos com agendamento (barbearia, estetica...). So usa tokens do tema;
+   tokens que um tema pode nao ter tem valor reserva. Cada nicho sobrescreve depois dela. */
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth} }
+body{font-family:var(--f-body);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img{max-width:100%;display:block}
+ul,ol{list-style:none}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+section{padding:72px 0;scroll-margin-top:72px}
+.eyebrow{font-family:var(--f-mono, var(--f-body));font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.lead{color:var(--text-dim);max-width:56ch}
+
+/* botoes */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;
+  border-radius:999px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);
+  font-weight:700;font-size:15px;text-decoration:none;cursor:pointer;
+  transition:background-color .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s}
+.btn:hover{background:var(--accent-hover);border-color:var(--accent-hover);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn.sm{min-height:40px;padding:0 16px;font-size:14px}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+
+/* aviso de demo */
+.demo-bar{background:var(--bg-deep, var(--surface));color:var(--text-dim);text-align:center;font-size:12px;padding:8px var(--gutter);
+  font-family:var(--f-mono, var(--f-body));border-bottom:1px solid var(--line)}
+.demo-bar b{color:var(--accent);font-weight:500}
+
+/* header */
+.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg-deep, var(--surface)) 82%,transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.logo span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top nav{display:none;gap:28px}
+.top nav a{text-decoration:none;color:var(--text-dim);font-weight:500;font-size:15px;transition:color .2s}
+.top nav a:hover{color:var(--accent)}
+.top .btn{flex-shrink:0}
+@media (max-width:419px){ .sm-hide{display:none} }
+
+/* prova social */
+.proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--surface) 70%,transparent);padding:0}
+.proof ul{display:grid;grid-template-columns:repeat(3,1fr)}
+.proof li{padding:22px 8px;text-align:center}
+.proof li+li{border-left:1px solid var(--line)}
+.proof b{display:block;font-family:var(--f-display);font-weight:900;font-size:clamp(28px,6vw,44px);color:var(--text);line-height:1}
+.proof span{display:block;font-size:13px;color:var(--text-dim);margin-top:6px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.status{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+.status.closed .dot{background:var(--off);box-shadow:0 0 0 4px color-mix(in srgb,var(--off) 22%,transparent)}
+.card h3{font-size:26px;font-weight:800;margin:22px 0 12px}
+
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0;border-radius:10px;
+  border:1px solid var(--line);background:transparent;cursor:pointer;
+  transition:background-color .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s}
+.day small{font-family:var(--f-mono, var(--f-body));font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim)}
+.day b{font-family:var(--f-display);font-size:22px;font-weight:800;line-height:1}
+.day:hover:not([disabled]){border-color:var(--accent)}
+.day[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.day[aria-pressed="true"] small{color:var(--accent-ink)}
+.day[disabled]{opacity:.35;cursor:not-allowed}
+
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;margin-top:14px}
+.slot{min-height:42px;border-radius:10px;border:1px solid var(--line);background:transparent;cursor:pointer;
+  font-family:var(--f-mono, var(--f-body));font-size:14px;
+  transition:background-color .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s}
+.slot:hover:not([disabled]){border-color:var(--accent);color:var(--accent)}
+.slot[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.slot[disabled]{color:var(--muted);text-decoration:line-through;cursor:not-allowed}
+.hint{color:var(--text-dim);font-size:13px;margin-top:12px}
+
+/* servicos */
+.services{display:grid;gap:16px;margin-top:36px}
+.svc{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);padding:26px;transition:border-color .2s,box-shadow .2s,transform .2s}
+.svc:hover{border-color:var(--accent)}
+.svc h3{font-size:30px;font-weight:800}
+.svc .price{font-family:var(--f-display);font-size:54px;font-weight:900;line-height:1;margin:14px 0 4px}
+.svc .dur{font-family:var(--f-mono, var(--f-body));font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
+.svc ul{margin:20px 0 24px;display:grid;gap:8px;color:var(--text-dim)}
+.svc li::before{content:"— ";color:var(--accent)}
+.svc .btn{margin-top:auto}
+.svc.featured{order:-1;background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent-soft)}
+.svc.featured .dur,.svc.featured ul{color:var(--accent-soft-ink)}
+.svc.featured li::before{color:var(--accent-ink)}
+.badge{position:absolute;top:-12px;left:26px;background:var(--accent);color:var(--accent-ink);font-family:var(--f-mono, var(--f-body));
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+
+/* galeria */
+.gallery{display:grid;grid-auto-flow:column;grid-auto-columns:78%;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
+  margin-top:32px;padding-bottom:10px;scrollbar-width:thin}
+.gallery figure{scroll-snap-align:start}
+.ph{aspect-ratio:4/5;border-radius:var(--r);border:1px dashed var(--muted);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;text-align:center;padding:16px;color:var(--text-dim);
+  background:repeating-linear-gradient(135deg,var(--surface) 0 14px,color-mix(in srgb,var(--surface) 70%,var(--bg-green, var(--bg))) 14px 28px)}
+.ph b{font-family:var(--f-display);font-size:28px;font-weight:800;text-transform:uppercase;color:var(--text)}
+.ph small{font-family:var(--f-mono, var(--f-body));font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+
+/* agendamento */
+.booking{margin-top:32px;max-width:760px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px;counter-reset:s}
+.steps li{counter-increment:s;font-size:13px;color:var(--text-dim);padding-top:10px;border-top:3px solid var(--line);transition:border-color .2s,color .2s}
+.steps li::before{content:counter(s) ". ";font-family:var(--f-mono, var(--f-body))}
+.steps li.done,.steps li[aria-current="step"]{border-color:var(--accent);color:var(--text)}
+fieldset{border:0;min-width:0}
+legend{font-family:var(--f-display);font-size:30px;font-weight:800;text-transform:uppercase;margin-bottom:16px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:1px solid var(--line);
+  border-radius:var(--r);background:var(--surface);cursor:pointer;
+  transition:background-color .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s}
+.opt:hover{border-color:var(--accent)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
+.opt b{display:block;font-weight:600}
+.opt small{color:var(--text-dim);font-family:var(--f-mono, var(--f-body));font-size:12px}
+.opt .p{font-family:var(--f-display);font-weight:800;font-size:26px}
+.field{display:grid;gap:6px;margin-top:16px}
+.field label{font-size:14px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;min-height:48px;padding:12px 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--surface);transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.field textarea{min-height:88px;resize:vertical}
+.sub-l{font-size:14px;font-weight:600;margin:4px 0 10px}
+.err{color:var(--off);font-size:14px;margin-top:14px;min-height:1.2em}
+.nav-steps{display:flex;gap:10px;justify-content:space-between;margin-top:20px}
+.nav-steps .btn:only-child{margin-left:auto}
+.pre-time{font-family:var(--f-mono, var(--f-body));font-size:13px;color:var(--accent);margin:-6px 0 14px}
+.summary dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin-bottom:18px}
+.summary dt{color:var(--text-dim);font-size:14px}
+.summary dd{font-weight:600}
+.msg{width:100%;min-height:200px;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--bg-deep, var(--surface));
+  font-family:var(--f-mono, var(--f-body));font-size:13px;line-height:1.6;resize:vertical}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+
+/* rodape */
+footer{border-top:1px solid var(--line);padding:56px 0 calc(110px + env(safe-area-inset-bottom))}
+.foot{display:grid;gap:32px}
+footer h4{font-family:var(--f-mono, var(--f-body));font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;font-weight:500}
+footer p,footer td{color:var(--text-dim);font-size:15px}
+footer table{border-collapse:collapse;width:100%;max-width:300px}
+footer td{padding:3px 0}
+footer td+td{text-align:right;font-family:var(--f-mono, var(--f-body));font-size:13px}
+footer tr.today td{color:var(--text)}
+.copy-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fine{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-family:var(--f-mono, var(--f-body));font-size:12px;color:var(--muted)}
+
+/* barra fixa mobile */
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
+  background:color-mix(in srgb,var(--bg-deep, var(--surface)) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);transition:transform .2s}
+.mbar span{font-size:14px;color:var(--text-dim)}
+.mbar b{display:block;font-family:var(--f-display);font-size:24px;font-weight:900;color:var(--text);line-height:1}
+.mbar.hide{transform:translateY(110%)}
+
+@media (min-width:720px){
+  .gallery{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);overflow:visible}
+  .opts.svcs{grid-template-columns:repeat(3,1fr)}
+  .opt.svcopt{flex-direction:column;align-items:flex-start}
+  .foot{grid-template-columns:repeat(3,1fr)}
+}
+@media (min-width:960px){
+  .top nav{display:flex}
+  .services{grid-template-columns:1fr 1.15fr 1fr;align-items:center}
+  .svc.featured{order:0;transform:translateY(-10px);padding:34px 30px;box-shadow:0 24px 60px color-mix(in srgb,var(--accent) 18%,transparent)}
+  .mbar{display:none}
+  footer{padding-bottom:40px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition-duration:0s!important}
+}
+
+
+/* mallu: escuro com fitas rosa; claro em cartoes brancos. Tudo entra com reveal. */
+body{font-size:16px;line-height:1.6}
+h1,h2,h3{font-family:var(--f-display);letter-spacing:-.03em}
+section{position:relative;padding:120px 0;overflow:hidden;scroll-margin-top:84px}
+.wrap{max-width:var(--max)}
+.dark{background:var(--bg);color:var(--text)}
+.light{background:var(--light);color:var(--ink);
+  /* tokens das pecas da base (dias, horarios) dentro da secao clara */
+  --text:var(--ink);--text-dim:var(--ink-dim);--line:rgb(var(--ink-rgb) / .12);--muted:var(--light-muted)}
+.eyebrow{font:600 12px/1 var(--f-body);letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+.light .eyebrow{color:var(--accent-deep)}
+h2{font-size:clamp(34px,4.6vw,58px);font-weight:800;line-height:1.05;margin-bottom:22px}
+.lead{font-size:17px;line-height:1.7;max-width:540px;color:var(--text-dim)}
+.center{text-align:center}
+.center .lead{margin-inline:auto}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.num{font-variant-numeric:tabular-nums}
+svg.i{width:1em;height:1em;flex:none}
+
+/* botoes */
+.btn{min-height:0;gap:10px;padding:16px 28px;border:0;border-radius:12px;font:700 15px/1 var(--f-display);
+  box-shadow:0 10px 30px -8px var(--accent);transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{background:var(--accent);transform:translateY(-2px);box-shadow:0 16px 40px -8px var(--accent)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.22);box-shadow:none}
+.btn.ghost:hover{background:rgba(255,255,255,.06);color:var(--text);border-color:rgba(255,255,255,.22)}
+.btn.sm{min-height:0;padding:13px 20px;font-size:14px}
+.btn svg{width:18px;height:18px;transition:transform .2s}
+.btn:hover svg{transform:translateX(3px)}
+
+/* aviso de demo + header (transparente no topo, vidro ao rolar) */
+.demo-bar{background:var(--bg);border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.demo-bar b{color:var(--accent-2)}
+.top{background:transparent;border-bottom:0;backdrop-filter:none;-webkit-backdrop-filter:none;transition:background .3s,box-shadow .3s,backdrop-filter .3s}
+.top.scrolled{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.top .wrap{height:84px}
+.logo{gap:10px;white-space:nowrap}
+.logo .seal-mini{flex:none;width:42px;height:42px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;
+  box-shadow:0 4px 14px rgb(var(--accent-rgb) / .4)}
+.logo .seal-mini svg{width:20px;height:20px}
+.logo span:last-child{font:italic 900 22px/1.1 var(--f-display);letter-spacing:-.04em}
+.logo b{font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-left:4px}
+.top nav{gap:30px}
+.top nav a{font-size:15px;color:var(--text-soft)}
+.top nav a:hover{color:var(--accent-2)}
+
+/* hero */
+.hero{min-height:calc(100vh - 84px);display:flex;align-items:center;padding:60px 0 110px;
+  background:radial-gradient(1000px 600px at 75% 40%,rgb(var(--accent-rgb) / .16),transparent 60%),var(--bg)}
+.ribbons{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.9}
+.ribbons path{fill:none;stroke-linecap:round}
+.ribbons .r1{animation:drift 14s ease-in-out infinite alternate}
+.ribbons .r2{animation:drift 18s ease-in-out infinite alternate-reverse}
+@keyframes drift{from{transform:translateY(-10px)}to{transform:translateY(18px)}}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.hero-grid > *{min-width:0}
+.hero h1{font-size:clamp(44px,6.6vw,88px);font-weight:900;line-height:1;margin-bottom:30px}
+.hero h1 span{display:block}
+.hero .lead{font-size:19px;margin-bottom:40px}
+.ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px}
+.checks{display:flex;gap:28px;flex-wrap:wrap;font-size:14px;color:var(--text-soft)}
+.checks li{display:flex;gap:8px;align-items:center}
+.checks svg{width:16px;height:16px;color:var(--accent)}
+.checks b{font-weight:600;color:#fff}
+.scroll-hint{position:absolute;left:32px;bottom:34px;display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.32em;color:var(--text-dim)}
+.scroll-hint::before{content:"";width:1px;height:48px;background:linear-gradient(var(--accent),transparent)}
+
+/* painel do agendamento (flutua) */
+.visual{position:relative;height:620px}
+.panel{position:absolute;right:0;top:0;width:380px;max-width:100%;background:linear-gradient(160deg,var(--panel-a),var(--panel-b));
+  border:1px solid var(--line);border-radius:26px;padding:26px;box-shadow:0 40px 90px -25px rgba(0,0,0,.8);animation:float 6s ease-in-out infinite}
+@keyframes float{50%{translate:0 -12px}}
+.panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 12px;margin-bottom:6px}
+.panel-head h3{font-size:18px}
+.live{font-size:12px;color:var(--accent-2);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.6s infinite}
+.live.closed{color:var(--off)}
+@keyframes pulse{50%{opacity:.25}}
+.panel small.sub{font-size:12px;color:var(--text-dim)}
+.progress{margin:20px 0 18px;padding:16px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.progress-top{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--text-dim);margin-bottom:10px}
+.progress-top b{color:#fff;font:800 22px var(--f-display)}
+.bar{height:8px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:8px;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.doc{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+.doc:last-of-type{border-bottom:0}
+.doc .d-ico{flex:none;width:34px;height:34px;border-radius:10px;background:rgb(var(--accent-rgb) / .14);color:var(--accent-2);display:grid;place-items:center}
+.doc .d-ico svg{width:16px;height:16px}
+.doc > div{flex:1;min-width:0}
+.doc span{display:block;font-size:11px;color:var(--text-dim)}
+.doc strong{font-weight:500}
+.chip{font-size:10.5px;font-weight:600;padding:5px 10px;border-radius:20px;white-space:nowrap}
+.chip.ok{background:rgba(86,214,152,.14);color:#6ee0a8}
+.chip.run{background:rgb(var(--accent-rgb) / .16);color:var(--accent-2)}
+.panel .total{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0}
+.panel .total span{font-size:12px;color:var(--text-dim)}
+.panel .total b{font:900 30px var(--f-display);letter-spacing:-.03em}
+.panel .btn{width:100%}
+.seal{position:absolute;left:-20px;bottom:0;width:190px;height:190px;filter:drop-shadow(0 30px 40px rgba(0,0,0,.55));
+  transform:rotate(-12deg);animation:float 7s ease-in-out infinite .8s;z-index:2}
+.seal text,.seal-big text{font:700 15px var(--f-display);letter-spacing:.3em;fill:#fff}
+
+/* servicos (cartoes que abrem o modal) */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px;text-align:left}
+.service{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;width:100%;cursor:pointer;
+  background:#fff;color:var(--ink);border:0;border-radius:var(--r);padding:30px 28px;text-align:left;
+  box-shadow:0 14px 40px -24px rgb(var(--ink-rgb) / .3);transition:transform .25s,box-shadow .25s}
+.service::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--grad);transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.service:hover{transform:translateY(-6px);box-shadow:0 26px 50px -24px rgb(var(--ink-rgb) / .45)}
+.service:hover::after,.service[aria-checked="true"]::after{transform:scaleX(1)}
+.service[aria-checked="true"]{box-shadow:0 0 0 2px var(--accent),0 26px 50px -24px rgb(var(--accent-rgb) / .45)}
+.ico{width:48px;height:48px;border-radius:14px;background:var(--accent-soft);color:var(--accent-deep);display:grid;place-items:center;margin-bottom:22px}
+.ico svg{width:22px;height:22px}
+.service h3{font-size:19px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.service .price{font:900 38px/1 var(--f-display);letter-spacing:-.04em;margin:8px 0 4px}
+.service[aria-checked="true"] .price{color:var(--accent-deep)}
+.service .dur{font-size:13px;color:var(--ink-dim);margin-bottom:22px}
+.service .pop{position:absolute;top:24px;right:24px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 10px;border-radius:20px;background:var(--accent-soft);color:var(--accent-deep)}
+.more{margin-top:auto;display:flex;align-items:center;gap:8px;font:700 13px var(--f-display);color:var(--accent-deep)}
+.more svg{width:16px;height:16px;transition:transform .2s}
+.service:hover .more svg{transform:translateX(4px)}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;visibility:hidden;opacity:0;transition:opacity .3s,visibility .3s}
+.modal.open{visibility:visible;opacity:1}
+.modal-bg{position:absolute;inset:0;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.modal-box{position:relative;width:min(620px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#fff;color:var(--ink);border-radius:26px;
+  box-shadow:0 40px 100px -20px rgba(0,0,0,.6);transform:translateY(30px) scale(.97);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.modal.open .modal-box{transform:none}
+.modal-top{background:radial-gradient(400px 200px at 100% 0%,rgb(var(--accent-rgb) / .35),transparent 70%),var(--bg);color:#fff;padding:34px 34px 30px;position:relative}
+.modal-top .ico{background:rgb(var(--accent-rgb) / .18);color:var(--accent-2);margin-bottom:18px}
+.modal-top .eyebrow{margin-bottom:10px}
+.modal-top h3{font-size:clamp(24px,4vw,32px);font-weight:800;line-height:1.1}
+.modal-top .m-meta{margin-top:10px;color:var(--text-dim);font-size:14px}
+.modal-top .m-meta b{color:#fff;font:800 20px var(--f-display);margin-right:8px}
+.x{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;color:#fff;background:rgba(255,255,255,.08);display:grid;place-items:center;transition:background .2s}
+.x:hover{background:rgba(255,255,255,.18)}
+.x svg{width:16px;height:16px}
+.modal-body{padding:30px 34px 34px}
+.modal-body h4{font:800 12px var(--f-display);letter-spacing:.2em;color:var(--accent-deep);margin-bottom:14px}
+.modal-body ul{display:grid;gap:12px;margin-bottom:30px}
+.modal-body li{display:flex;gap:12px;font-size:15px;line-height:1.5}
+.modal-body li svg{flex:none;width:20px;height:20px;padding:4px;border-radius:50%;background:var(--accent-soft);color:var(--accent-deep);margin-top:1px}
+.modal-body .btn{width:100%}
+body.lock{overflow:hidden}
+
+/* como funciona */
+.how{background:radial-gradient(700px 500px at 0% 90%,rgb(var(--accent-rgb) / .16),transparent 60%),var(--bg)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.split > *{min-width:0}
+.list{margin-top:36px;display:grid;gap:22px}
+.list li{display:flex;gap:16px}
+.list .n{flex:none;width:34px;height:34px;border-radius:50%;background:rgb(var(--accent-rgb) / .16);display:grid;place-items:center;color:var(--accent-2);font:800 14px var(--f-display)}
+.list strong{font:700 17px var(--f-display);display:block;margin-bottom:4px}
+.list p{font-size:14px;color:var(--text-dim);line-height:1.6}
+.flow{background:linear-gradient(160deg,var(--panel-a),var(--panel-b));border:1px solid var(--line);border-radius:26px;padding:28px;width:min(440px,100%);margin-left:auto;box-shadow:0 40px 80px -30px rgba(0,0,0,.8)}
+.flow-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
+.flow-head h3{font-size:17px;display:flex;gap:10px;align-items:center}
+.flow-head .sh{width:34px;height:34px;border-radius:10px;background:rgb(var(--accent-rgb) / .16);display:grid;place-items:center;color:var(--accent-2)}
+.flow-head .sh svg{width:16px;height:16px}
+.fsteps{position:relative;display:grid;gap:10px}
+.fsteps::before{content:"";position:absolute;left:17px;top:18px;bottom:18px;width:2px;background:var(--line)}
+.fsteps .fill{position:absolute;left:17px;top:18px;width:2px;height:0;background:var(--accent);transition:height .6s}
+.fstep{display:flex;gap:16px;align-items:center;padding:12px 14px 12px 0;border-radius:14px;border:1px solid transparent;transition:background .4s,border-color .4s;position:relative}
+.fstep .s-ico{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--text-dim);transition:all .4s;z-index:1}
+.fstep .s-ico svg{width:15px;height:15px}
+.fstep > div{min-width:0}
+.fstep strong{font-size:14.5px;font-weight:600}
+.fstep span{display:block;font-size:12px;color:var(--text-dim)}
+.fstep.done{background:rgb(var(--accent-rgb) / .08);border-color:rgb(var(--accent-rgb) / .28)}
+.fstep.done .s-ico{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 0 5px rgb(var(--accent-rgb) / .2)}
+
+/* agenda (secao clara, cartao branco) */
+.agenda-card{margin:56px auto 0;max-width:820px;background:#fff;border-radius:26px;padding:34px;text-align:left;box-shadow:0 30px 70px -36px rgb(var(--ink-rgb) / .4)}
+.agenda-card .row-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.agenda-card h3{font-size:18px}
+.agenda-card .svc-now{font-size:13px;color:var(--ink-dim)}
+.agenda-card .svc-now b{color:var(--accent-deep)}
+.days{gap:8px;margin-bottom:20px}
+.day{border-radius:14px;padding:11px 0;background:#fff}
+.day b{font-family:var(--f-display);font-weight:800;font-size:20px;margin-top:3px}
+.day small{font-family:var(--f-body);font-weight:600}
+.day:hover:not([disabled]){border-color:var(--accent);transform:translateY(-2px)}
+.day[aria-pressed="true"]{background:var(--grad);border-color:transparent;box-shadow:0 10px 24px -10px var(--accent)}
+.slots{grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:9px;margin-top:0}
+.slot{border-radius:12px;font-family:var(--f-body);font-weight:500;font-variant-numeric:tabular-nums}
+.slot:hover:not([disabled]){border-color:var(--accent);color:var(--accent-deep);transform:translateY(-2px)}
+.slot[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 10px 24px -10px var(--accent)}
+.agenda-foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.agenda-foot .sum{font-size:14px;color:var(--ink-dim)}
+.agenda-foot .sum b{display:block;font:800 18px var(--f-display);color:var(--ink);letter-spacing:-.01em}
+
+/* cortes */
+.cuts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
+.cut{position:relative;min-width:0;aspect-ratio:4/5;border-radius:26px;overflow:hidden;display:flex;align-items:flex-end;padding:26px;
+  background:linear-gradient(160deg,var(--panel-a),var(--panel-b));border:1px solid var(--line);box-shadow:0 40px 80px -30px rgba(0,0,0,.8);transition:transform .3s,border-color .3s}
+.cut:hover{transform:translateY(-6px);border-color:rgb(var(--accent-rgb) / .4)}
+.cut::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 260px at 80% 10%,rgb(var(--accent-rgb) / .28),transparent 70%)}
+.cut svg{position:absolute;width:56%;height:auto;right:-4%;top:10%;color:var(--accent-2);opacity:.22;transition:transform .5s,opacity .5s}
+.cut:hover svg{transform:rotate(-8deg) scale(1.05);opacity:.32}
+.cut .cap{position:relative}
+.cut h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.cut p{margin-top:5px;font-size:13px;color:var(--text-dim)}
+
+/* diferenciais */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:56px}
+.stat{background:#fff;border-radius:var(--r);padding:28px;box-shadow:0 14px 40px -24px rgb(var(--ink-rgb) / .3);text-align:left;transition:transform .25s}
+.stat:hover{transform:translateY(-4px)}
+.stat .ico{margin-bottom:18px}
+.stat h3{font-size:16px;line-height:1.35;font-weight:700;letter-spacing:-.01em}
+
+/* chamada final */
+.cta{text-align:center;padding:140px 0}
+.cta .seal-big{width:140px;height:140px;margin:0 auto 26px;filter:drop-shadow(0 20px 40px rgb(var(--accent-rgb) / .35))}
+.cta h2{font-size:clamp(38px,5.6vw,72px);font-weight:900}
+.cta .lead{margin:0 auto 40px}
+.cta .ctas{justify-content:center;margin-bottom:0}
+.cta .note{margin-top:26px;font-size:13px;color:var(--text-dim)}
+
+/* rodape */
+footer{background:var(--bg);border-top:1px solid var(--line);padding-top:70px}
+footer h4{font:800 13px var(--f-display);letter-spacing:.18em;color:var(--text);margin-bottom:18px}
+footer p,footer td{color:var(--text-dim);font-size:14px}
+footer a{color:var(--accent-2)}
+footer td+td{font-family:var(--f-body)}
+.copy-row .btn{padding:9px 14px;font-size:12px}
+.fine{font-family:var(--f-body);font-size:12px;color:var(--text-dim);margin-top:60px}
+.mbar{background:color-mix(in srgb,var(--bg) 92%,transparent)}
+.mbar b{font-family:var(--f-display)}
+.mbar .btn{padding:13px 18px;font-size:14px}
+
+/* entrada */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.1s}.reveal.d2{transition-delay:.2s}.reveal.d3{transition-delay:.3s}
+
+@media (max-width:1024px){
+  .hero-grid,.split{grid-template-columns:1fr;gap:60px}
+  .visual{max-width:460px;width:100%;margin-inline:auto}
+  .services-grid{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .flow{margin:0 auto}
+}
+@media (max-width:760px){
+  section{padding:90px 0}
+  .top .wrap{height:72px}
+  .logo span:last-child{font-size:19px}
+  .logo .seal-mini{width:36px;height:36px}
+  .hero{padding-top:40px}
+  .visual{height:600px}
+  .panel{width:100%;padding:22px}
+  .seal{width:140px;height:140px;left:calc(50% - 70px)}
+  .services-grid,.stats,.cuts{grid-template-columns:1fr}
+  .cut{aspect-ratio:16/10}
+  .scroll-hint{display:none}
+  .agenda-card{padding:22px}
+  .agenda-foot .btn{width:100%}
+  .modal-top{padding:28px 24px 24px}
+  .modal-body{padding:24px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="rg1" x1="0" x2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:0"/><stop offset=".55" style="stop-color:var(--accent);stop-opacity:.55"/><stop offset="1" style="stop-color:var(--accent-2);stop-opacity:.9"/></linearGradient>
+    <linearGradient id="rg2" x1="0" x2="1"><stop offset="0" style="stop-color:var(--accent-2);stop-opacity:.05"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:.45"/></linearGradient>
+    <linearGradient id="sealg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:var(--accent-2)"/></linearGradient>
+    <path id="seal-circle" d="M100 100m-72 0a72 72 0 1 1 144 0a72 72 0 1 1-144 0"/>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-scissors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 16 19 3M16 16 5 3"/></symbol>
+    <symbol id="i-razor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16c2-7 7-11 14-12-1 6-4 10-7 12"/><path d="M3 16c3 2 7 2 10 0M17 4l4-3"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17M8 3v3M12 3v3"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4" stroke-linecap="round"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+    <symbol id="i-chair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v7H7zM5 10h14v4H5zM8 14v7M16 14v7M6 21h4M14 21h4"/></symbol>
+  </defs>
+</svg>
+
+
+
+<div class="demo-bar">DEMONSTRAÇÃO — página feita para <b>§NOME§</b> · não é o site oficial</div>
+
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#topo" aria-label="§NOME§, início"><span class="seal-mini" aria-hidden="true"><svg><use href="#i-scissors"/></svg></span><span>§NOME§</span></a>
+    <nav aria-label="Seções">
+      <a href="#servicos">Serviços</a>
+      <a href="#como">Como funciona</a>
+      <a href="#agendar">Horários</a>
+      <a href="#cortes">Cortes</a>
+      <a href="#contato">Contato</a>
+</nav>
+    <a class="btn sm" href="#agendar" data-go-agendar>Agendar horário</a>
+  </div>
+</header>
+
+<main id="topo">
+
+  <section class="hero" id="inicio">
+    <svg class="ribbons" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+      <path class="r1" d="M-50 760 C 300 520, 600 420, 900 470 S 1300 420, 1500 60" stroke="url(#rg1)" stroke-width="70"/>
+      <path class="r2" d="M-50 520 C 350 420, 700 500, 1000 440 S 1350 300, 1500 160" stroke="url(#rg2)" stroke-width="26"/>
+      <path class="r1" d="M200 900 C 500 640, 800 640, 1100 600 S 1400 520, 1500 400" stroke="url(#rg2)" stroke-width="6"/>
+    </svg>
+
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow reveal">Barbearia em §CIDADE§</p>
+        <h1 class="reveal"><span>Hora marcada.</span><span class="grad-text">Zero espera.</span></h1>
+        <p class="lead reveal d1">Agende pelo celular em 30 segundos, chegue no horário e sente direto na cadeira. Corte, barba e acabamento feitos com calma, do jeito que você pediu.</p>
+        <div class="ctas reveal d2">
+          <a class="btn" href="#agendar">Ver horários livres <svg><use href="#i-arrow"/></svg></a>
+          <a class="btn ghost" href="#servicos">Serviços e preços</a>
+        </div>
+        <ul class="checks reveal d3">
+          <li><svg><use href="#i-check"/></svg><span><b>4,9 ★</b> no Google</span></li><li><svg><use href="#i-check"/></svg><span><b>7.200+</b> cortes em 2025</span></li><li><svg><use href="#i-check"/></svg><span><b>0 min</b> de espera</span></li>
+        </ul>
+      </div>
+
+      <div class="visual reveal d2">
+        <aside class="panel" aria-label="Resumo do agendamento">
+          <div class="panel-head"><h3>Seu agendamento</h3><span class="live" data-status><span data-status-curto></span></span></div>
+          <small class="sub">Mude o serviço ou o horário e o resumo acompanha</small>
+          <div class="progress">
+            <div class="progress-top"><span data-ocup-texto>Agenda de hoje ocupada</span><b class="num" data-ocup>0%</b></div>
+            <div class="bar"><i data-ocup-bar></i></div>
+          </div>
+          <div class="doc"><span class="d-ico"><svg><use href="#i-scissors"/></svg></span><div><strong data-t="svc">Corte + Barba</strong><span data-t="dur">70 min</span></div><em class="chip ok">Escolhido</em></div>
+          <div class="doc"><span class="d-ico"><svg><use href="#i-calendar"/></svg></span><div><strong data-t="dia">–</strong><span>Dia</span></div><em class="chip run" data-t="hora">–</em></div>
+          <div class="total"><span>Total</span><b class="num" data-t="preco">R$ 80</b></div>
+          <a class="btn" data-wa href="§WA§" target="_blank" rel="noopener">Confirmar no WhatsApp <svg><use href="#i-arrow"/></svg></a>
+        </aside>
+        <svg class="seal" viewBox="0 0 200 200" aria-hidden="true">
+  <circle cx="100" cy="100" r="96" fill="url(#sealg)"/>
+  <circle cx="100" cy="100" r="54" style="fill:var(--bg)"/>
+  <text><textPath href="#seal-circle">HORA MARCADA · ZERO ESPERA · </textPath></text>
+  <use href="#i-scissors" x="72" y="72" width="56" height="56" style="color:var(--accent-2)"/>
+</svg>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">DESLIZE PARA VER MAIS</div>
+  </section>
+
+  <section class="light center" id="servicos">
+    <div class="wrap">
+      <p class="eyebrow reveal">Serviços</p>
+      <h2 class="reveal d1">O preço que está na tela<br>é o que você paga.</h2>
+      <p class="lead reveal d2">Toque em um serviço para ver o que está incluso e agendar.</p>
+      <div class="services-grid" role="radiogroup" aria-label="Escolha o serviço">
+        
+        <button type="button" class="service reveal" role="radio"
+          aria-checked="false" data-pick="corte">
+          
+          <span class="ico"><svg><use href="#i-scissors"/></svg></span>
+          <h3>Corte</h3>
+          <div class="price num">R$ 50</div>
+          <div class="dur">40 minutos · 3 etapas</div>
+          <span class="more">Ver detalhes <svg><use href="#i-arrow"/></svg></span>
+        </button>
+        
+        <button type="button" class="service reveal d1" role="radio"
+          aria-checked="true" data-pick="combo">
+          <span class="pop">Mais pedido</span>
+          <span class="ico"><svg><use href="#i-star"/></svg></span>
+          <h3>Corte + Barba</h3>
+          <div class="price num">R$ 80</div>
+          <div class="dur">70 minutos · 3 etapas</div>
+          <span class="more">Ver detalhes <svg><use href="#i-arrow"/></svg></span>
+        </button>
+        
+        <button type="button" class="service reveal d2" role="radio"
+          aria-checked="false" data-pick="barba">
+          
+          <span class="ico"><svg><use href="#i-razor"/></svg></span>
+          <h3>Barba</h3>
+          <div class="price num">R$ 45</div>
+          <div class="dur">30 minutos · 3 etapas</div>
+          <span class="more">Ver detalhes <svg><use href="#i-arrow"/></svg></span>
+        </button>
+        
+      </div>
+    </div>
+  </section>
+
+  <section class="how" id="como">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow reveal">Como funciona</p>
+        <h2 class="reveal d1">Do celular direto para a cadeira.</h2>
+        <p class="lead reveal d2">Você escolhe, a gente confirma e guarda o seu horário. Sem fila e sem ligação.</p>
+        <ul class="list">
+          <li class="reveal"><span class="n">1</span><div><strong>Escolha o serviço</strong><p>Preço e duração aparecem na hora.</p></div></li>
+          <li class="reveal d1"><span class="n">2</span><div><strong>Escolha o horário</strong><p>Só aparecem os que comportam o serviço inteiro.</p></div></li>
+          <li class="reveal d2"><span class="n">3</span><div><strong>Mande no WhatsApp</strong><p>O resumo vai pronto na mensagem.</p></div></li>
+          <li class="reveal d3"><span class="n">4</span><div><strong>Sente na cadeira</strong><p>Chegou no horário, é a sua vez.</p></div></li>
+        </ul>
+      </div>
+      <div class="reveal d2">
+        <div class="flow" data-flow>
+          <div class="flow-head"><h3><span class="sh"><svg><use href="#i-calendar"/></svg></span>Seu horário</h3><span class="live">Ao vivo</span></div>
+          <div class="fsteps">
+            <span class="fill" data-flow-fill></span>
+            <div class="fstep"><span class="s-ico"><svg><use href="#i-scissors"/></svg></span><div><strong>Serviço escolhido</strong><span data-t="svc">Corte + Barba</span></div></div>
+            <div class="fstep"><span class="s-ico"><svg><use href="#i-calendar"/></svg></span><div><strong>Dia e horário</strong><span data-t="quando">–</span></div></div>
+            <div class="fstep"><span class="s-ico"><svg><use href="#i-chat"/></svg></span><div><strong>Confirmado no WhatsApp</strong><span>Resposta em minutos</span></div></div>
+            <div class="fstep"><span class="s-ico"><svg><use href="#i-chair"/></svg></span><div><strong>Cadeira reservada</strong><span>No seu nome, sem espera</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="light center" id="agendar">
+    <div class="wrap">
+      <p class="eyebrow reveal">Horários livres</p>
+      <h2 class="reveal d1">Escolha o seu horário.</h2>
+      <p class="lead reveal d2">Riscado já foi reservado. O resto é seu.</p>
+      <div class="agenda-card reveal d2">
+        <div class="row-top">
+          <h3>Próximos 7 dias</h3>
+          <p class="svc-now">Serviço: <b data-t="svc">Corte + Barba</b> · <span data-t="dur">70 min</span></p>
+        </div>
+        <div class="days" data-days role="group" aria-label="Escolha o dia"></div>
+        <div class="slots" data-slots role="group" aria-label="Escolha o horário"></div>
+        <div class="agenda-foot">
+          <p class="sum"><b data-t="resumo"></b>Confirma no WhatsApp e a cadeira fica no seu nome.</p>
+          <a class="btn" data-wa href="§WA§" target="_blank" rel="noopener">Confirmar no WhatsApp <svg><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark center" id="cortes">
+    <div class="wrap">
+      <p class="eyebrow reveal">Cortes</p>
+      <h2 class="reveal d1">Trabalhos da casa.</h2>
+      <p class="lead reveal d2">Na versão final, as fotos reais dos seus cortes entram aqui.</p>
+      <div class="cuts">
+        
+        <article class="cut reveal">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-scissors"/></svg>
+          <div class="cap"><h3>Degradê na navalha</h3><p>Foto do seu trabalho aqui</p></div>
+        </article>
+        
+        <article class="cut reveal d1">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-razor"/></svg>
+          <div class="cap"><h3>Barba desenhada</h3><p>Foto do seu trabalho aqui</p></div>
+        </article>
+        
+        <article class="cut reveal d2">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-star"/></svg>
+          <div class="cap"><h3>Social clássico</h3><p>Foto do seu trabalho aqui</p></div>
+        </article>
+        
+      </div>
+    </div>
+  </section>
+
+  <section class="light center" id="diferenciais">
+    <div class="wrap">
+      <p class="eyebrow reveal">Por que §NOME§</p>
+      <h2 class="reveal d1">Detalhes que fazem você voltar.</h2>
+      <p class="lead reveal d2">Barbearia com atendimento no horário marcado, profissionais experientes e ambiente que você quer voltar.</p>
+      <div class="stats">
+        
+        <div class="stat reveal"><span class="ico"><svg><use href="#i-clock"/></svg></span><h3>Horário marcado: chegou, sentou, cortou</h3></div>
+        
+        <div class="stat reveal d1"><span class="ico"><svg><use href="#i-coffee"/></svg></span><h3>Café e água por conta da casa</h3></div>
+        
+        <div class="stat reveal d2"><span class="ico"><svg><use href="#i-card"/></svg></span><h3>Pix, cartão e dinheiro</h3></div>
+        
+        <div class="stat reveal d3"><span class="ico"><svg><use href="#i-user"/></svg></span><h3>Profissionais com anos de cadeira</h3></div>
+        
+      </div>
+    </div>
+  </section>
+
+  <section class="dark cta">
+    <svg class="ribbons" viewBox="0 0 1440 700" preserveAspectRatio="none" aria-hidden="true">
+      <path class="r1" d="M-50 520 C 300 380, 700 420, 1000 300 S 1350 80, 1500 40" stroke="url(#rg1)" stroke-width="40" opacity=".6"/>
+      <path class="r2" d="M-50 300 C 400 260, 800 380, 1100 260 S 1400 160, 1500 200" stroke="url(#rg2)" stroke-width="14"/>
+    </svg>
+    <div class="wrap" style="position:relative">
+      <div class="reveal"><svg class="seal-big" viewBox="0 0 200 200" aria-hidden="true">
+  <circle cx="100" cy="100" r="96" fill="url(#sealg)"/>
+  <circle cx="100" cy="100" r="54" style="fill:var(--bg)"/>
+  <text><textPath href="#seal-circle">HORA MARCADA · ZERO ESPERA · </textPath></text>
+  <use href="#i-scissors" x="72" y="72" width="56" height="56" style="color:var(--accent-2)"/>
+</svg></div>
+      <p class="eyebrow reveal">Está tudo escolhido</p>
+      <h2 class="reveal d1">Guarde a sua cadeira.</h2>
+      <p class="lead reveal d2">Manda a mensagem que a gente confirma e reserva o horário no seu nome.</p>
+      <div class="ctas reveal d3">
+        <a class="btn" data-wa href="§WA§" target="_blank" rel="noopener">Confirmar no WhatsApp <svg><use href="#i-arrow"/></svg></a>
+        <a class="btn ghost" href="#agendar">Trocar horário</a>
+      </div>
+      <p class="note" data-t="resumo"></p>
+    </div>
+  </section>
+
+  <div class="modal" data-modal role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <div class="modal-bg" data-close></div>
+    <div class="modal-box">
+      <div class="modal-top">
+        <button type="button" class="x" data-close aria-label="Fechar"><svg><use href="#i-close"/></svg></button>
+        <span class="ico"><svg><use data-m-icon href="#i-scissors"/></svg></span>
+        <p class="eyebrow">Serviço</p>
+        <h3 id="m-title" data-m-title></h3>
+        <p class="m-meta"><b class="num" data-m-preco></b><span data-m-dur></span></p>
+      </div>
+      <div class="modal-body">
+        <h4>O QUE ESTÁ INCLUSO</h4>
+        <ul data-m-list></ul>
+        <button type="button" class="btn" data-m-agendar>Escolher horário <svg><use href="#i-arrow"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer id="contato">
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <h4>Endereço</h4>
+        <p><strong>§NOME§</strong><br>§CIDADE§</p>
+        
+      </div>
+      <div>
+        <h4>Horário</h4>
+        <table>
+          
+          
+          <tr data-dow="1"><td>Segunda</td><td>13:00–20:00</td></tr>
+          
+          
+          <tr data-dow="2"><td>Terça</td><td>09:00–20:00</td></tr>
+          
+          
+          <tr data-dow="3"><td>Quarta</td><td>09:00–20:00</td></tr>
+          
+          
+          <tr data-dow="4"><td>Quinta</td><td>09:00–20:00</td></tr>
+          
+          
+          <tr data-dow="5"><td>Sexta</td><td>09:00–20:00</td></tr>
+          
+          
+          <tr data-dow="6"><td>Sábado</td><td>08:00–18:00</td></tr>
+          
+          
+          <tr data-dow="0"><td>Domingo</td><td>Fechado</td></tr>
+          
+        </table>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        
+        
+      </div>
+    </div>
+    <p class="fine">Demo · página de demonstração. Preços, horários e números são ilustrativos.</p>
+  </div>
+</footer>
+
+<div class="mbar" data-mbar>
+  <span><span data-t="svc">Corte + Barba</span><b data-t="preco">R$ 80</b></span>
+  <a class="btn" href="#agendar">Escolher horário</a>
+</div>
+
+<script>window.DEMO = {"booking": {"barbeiros": ["Sem prefer\u00eancia", "Barbeiro 1", "Barbeiro 2"], "diferenciais": ["Hor\u00e1rio marcado: chegou, sentou, cortou", "Caf\u00e9 e \u00e1gua por conta da casa", "Pix, cart\u00e3o e dinheiro", "Profissionais com anos de cadeira"], "endereco": "§CIDADE§", "eyebrow": "Barbearia em §CIDADE§", "galeria": [{"legenda": "Foto do seu trabalho aqui", "titulo": "Degrad\u00ea na navalha"}, {"legenda": "Foto do seu trabalho aqui", "titulo": "Barba desenhada"}, {"legenda": "Foto do seu trabalho aqui", "titulo": "Social cl\u00e1ssico"}], "horario": [null, ["13:00", "20:00"], ["09:00", "20:00"], ["09:00", "20:00"], ["09:00", "20:00"], ["09:00", "20:00"], ["08:00", "18:00"]], "prova_social": [{"rotulo": "no Google", "valor": "4,9 \u2605"}, {"rotulo": "cortes em 2025", "valor": "7.200+"}, {"rotulo": "de espera", "valor": "0 min"}], "servicos": [{"destaque": false, "duracao": 40, "id": "corte", "itens": ["M\u00e1quina e tesoura", "Lavagem", "Finaliza\u00e7\u00e3o com pomada"], "nome": "Corte", "preco": 5000}, {"destaque": true, "duracao": 70, "id": "combo", "itens": ["Corte completo", "Barba com toalha quente", "Navalha e hidrata\u00e7\u00e3o"], "nome": "Corte + Barba", "preco": 8000}, {"destaque": false, "duracao": 30, "id": "barba", "itens": ["Toalha quente", "Navalha", "Balm hidratante"], "nome": "Barba", "preco": 4500}], "texto": "Agende pelo celular em 30 segundos, chegue no hor\u00e1rio e sente direto na cadeira. Corte, barba e acabamento feitos com calma, do jeito que voc\u00ea pediu.", "titulo": ["Hora marcada.", "Zero espera."]}, "fallback": "§WA§", "marca": "§NOME§", "wa": "", "waDisplay": ""};</script>
+<script>
+/* Nucleo comum das demos com agendamento: tempo, agenda, status aberto/fechado, dias e horarios,
+   motor de passos do formulario, mascara do WhatsApp, copiar e barra fixa mobile.
+   Le window.DEMO (montado pelo demo_base.html.j2). O JS de cada nicho usa window.Agenda.
+   Incluido via Jinja: nao usar chaves duplas nem chave+cerquilha/porcentagem aqui. */
+window.Agenda = (function () {
+  "use strict";
+  var D = window.DEMO, C = D.booking;
+  var PASSO = 30;
+  var DIAS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  var DIAS_LONGO = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  var reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function (s, el) { return (el || document).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+
+  /* ---------- tempo ---------- */
+  var toMin = function (t) { var p = t.split(":"); return +p[0] * 60 + +p[1]; };
+  var hhmm = function (min) { return String(Math.floor(min / 60)).padStart(2, "0") + ":" + String(min % 60).padStart(2, "0"); };
+  var ddmm = function (d) { return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0"); };
+  var semHora = function (d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); };
+  var mesmoDia = function (a, b) { return !!(a && b) && a.toDateString() === b.toDateString(); };
+  var agoraMin = function () { var n = new Date(); return n.getHours() * 60 + n.getMinutes(); };
+  var brl = function (c) {
+    return "R$ " + (c / 100).toLocaleString("pt-BR", { minimumFractionDigits: c % 100 ? 2 : 0 });
+  };
+  var diaHora = function (d, t) { return DIAS_LONGO[d.getDay()] + ", " + ddmm(d) + " às " + hhmm(t); };
+  var expediente = function (d) {
+    var h = C.horario[d.getDay()];
+    return h ? { abre: toMin(h[0]), fecha: toMin(h[1]) } : null;
+  };
+  var proximosDias = function (n) {
+    var hoje = semHora(new Date()), out = [];
+    for (var i = 0; i < n; i++) out.push(new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + i));
+    return out;
+  };
+
+  /* Ocupacao simulada e deterministica pela data: o mesmo dia mostra sempre os mesmos
+     horarios ocupados. Trocar por uma chamada de API quando a agenda for real. */
+  function isOcupado(date, h, m) {
+    var s = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + h + ":" + m;
+    var x = 2166136261;
+    for (var i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619) >>> 0; }
+    return x % 100 < 35;
+  }
+
+  /* Horarios de 30 em 30 min em que o atendimento inteiro termina antes de fechar. */
+  function horarios(date, duracao) {
+    var e = expediente(date), out = [];
+    if (!e) return out;
+    var hoje = mesmoDia(date, new Date()), agora = agoraMin();
+    for (var t = e.abre; t + duracao <= e.fecha; t += PASSO) {
+      var passou = hoje && t <= agora;
+      var ocupado = isOcupado(date, Math.floor(t / 60), t % 60);
+      out.push({ t: t, livre: !passou && !ocupado, passou: passou });
+    }
+    return out;
+  }
+  var livres = function (date, dur) { return horarios(date, dur).filter(function (h) { return h.livre; }); };
+  var livresSemana = function (dur) {
+    return proximosDias(7).reduce(function (n, d) { return n + livres(d, dur).length; }, 0);
+  };
+  var primeiroDiaLivre = function (dur) {
+    return proximosDias(7).filter(function (d) { return livres(d, dur).length; })[0] || semHora(new Date());
+  };
+
+  /* ---------- status aberto/fechado ---------- */
+  function status() {
+    var hoje = semHora(new Date()), agora = agoraMin(), e = expediente(hoje);
+    if (e && agora >= e.abre && agora < e.fecha) return { aberto: true, txt: "Aberto agora · fecha às " + hhmm(e.fecha) };
+    if (e && agora < e.abre) return { aberto: false, txt: "Fechado · abre hoje às " + hhmm(e.abre) };
+    for (var i = 1; i <= 7; i++) {
+      var d = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + i), ed = expediente(d);
+      if (ed) return { aberto: false, txt: "Fechado · abre " + (i === 1 ? "amanhã" : DIAS_LONGO[d.getDay()]) + " às " + hhmm(ed.abre) };
+    }
+    return { aberto: false, txt: "Fechado" };
+  }
+  /* Pinta [data-status] (classe closed), [data-status-txt]/[data-status-curto] e o dia de hoje no rodape. */
+  function pintaStatus() {
+    var s = status(), el = $("[data-status]");
+    if (el) el.classList.toggle("closed", !s.aberto);
+    $$("[data-status-txt],[data-status-curto]").forEach(function (n) { n.textContent = s.txt; });
+    var tr = $('footer tr[data-dow="' + new Date().getDay() + '"]');
+    if (tr) tr.classList.add("today");
+    return s;
+  }
+
+  /* ---------- componentes: dias e horarios ---------- */
+  function renderDias(box, selecionado, aoEscolher) {
+    box.innerHTML = "";
+    proximosDias(7).forEach(function (d, i) {
+      var b = document.createElement("button");
+      var fechado = !expediente(d);
+      b.type = "button";
+      b.className = "day";
+      b.disabled = fechado;
+      b.setAttribute("aria-pressed", String(mesmoDia(d, selecionado)));
+      b.setAttribute("aria-label", (i === 0 ? "Hoje, " : "") + DIAS_LONGO[d.getDay()] + ", " + ddmm(d) + (fechado ? ", fechado" : ""));
+      b.innerHTML = "<small>" + (i === 0 ? "Hoje" : DIAS[d.getDay()]) + "</small><b>" + d.getDate() + "</b>";
+      b.addEventListener("click", function () { aoEscolher(d); });
+      box.appendChild(b);
+    });
+  }
+  function renderHorarios(box, date, duracao, selecionado, aoEscolher) {
+    box.innerHTML = "";
+    var lista = date ? horarios(date, duracao) : [];
+    if (!date || !lista.length) {
+      var p = document.createElement("p");
+      p.className = "hint";
+      p.textContent = !date ? "Escolha um dia." : "Sem horários nesse dia.";
+      box.appendChild(p);
+      return;
+    }
+    lista.forEach(function (h) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "slot";
+      b.textContent = hhmm(h.t);
+      b.disabled = !h.livre;
+      b.setAttribute("aria-pressed", String(h.t === selecionado));
+      b.setAttribute("aria-label", DIAS_LONGO[date.getDay()] + " " + ddmm(date) + " às " + hhmm(h.t) +
+        (h.passou ? ", já passou" : h.livre ? ", livre" : ", ocupado"));
+      if (h.livre) b.addEventListener("click", function () { aoEscolher(h.t); });
+      box.appendChild(b);
+    });
+  }
+
+  /* Passo "dia e hora" do formulario: estado = { dia, hora }, dur() = duracao do atendimento escolhido. */
+  function passoDiaHora(estado, dur, boxDias, boxHoras, erro) {
+    var valida = function () {
+      return !!estado.dia && estado.hora != null &&
+        livres(estado.dia, dur()).some(function (h) { return h.t === estado.hora; });
+    };
+    function render() {
+      renderDias(boxDias, estado.dia, function (d) {
+        estado.dia = d;
+        if (!valida()) estado.hora = null;
+        erro("");
+        render();
+      });
+      renderHorarios(boxHoras, estado.dia, dur(), estado.hora, function (t) {
+        estado.hora = t;
+        erro("");
+        render();
+      });
+    }
+    return {
+      render: render,
+      valida: valida,
+      /* ao entrar no passo: um horario vindo de fora que nao comporta o atendimento e descartado */
+      entrar: function (msg) {
+        if (estado.hora != null && !valida()) { estado.hora = null; erro(msg); }
+        render();
+      },
+      erroValidacao: function () {
+        if (!estado.dia) return "Escolha um dia.";
+        if (!valida()) return "Escolha um horário livre.";
+        return "";
+      }
+    };
+  }
+
+  /* ---------- motor de passos ----------
+     form com [data-step="1..N"] (N = total) e [data-step="N+1"] = resumo; [data-steps] li = indicador;
+     [data-next], [data-back], [data-err]. opts: { total, valida(n) -> msg, aoEntrar(n) }. */
+  function Passos(form, opts) {
+    var atual = 1, total = opts.total;
+    var erro = function (msg) { $("[data-err]", form).textContent = msg || ""; };
+    function ir(n) {
+      atual = n;
+      $$("[data-step]", form).forEach(function (el) { el.hidden = +el.getAttribute("data-step") !== n; });
+      $$("[data-steps] li", form).forEach(function (li, i) {
+        li.classList.toggle("done", i + 1 < n);
+        if (i + 1 === n) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
+      });
+      $("[data-back]", form).hidden = n === 1;
+      $("[data-next]", form).hidden = n === total + 1;
+      $("[data-next]", form).textContent = n === total ? "Ver resumo" : "Continuar";
+      if (opts.aoEntrar) opts.aoEntrar(n);
+    }
+    $("[data-next]", form).addEventListener("click", function () {
+      var e = opts.valida(atual);
+      erro(e);
+      if (!e) ir(atual + 1);
+    });
+    $("[data-back]", form).addEventListener("click", function () { erro(""); ir(atual - 1); });
+    form.addEventListener("submit", function (ev) { ev.preventDefault(); $("[data-next]", form).click(); });
+    return { ir: ir, erro: erro, atual: function () { return atual; } };
+  }
+
+  /* ---------- formulario: resumo, WhatsApp ---------- */
+  function preencheResumo(dl, itens) {
+    dl.innerHTML = "";
+    itens.forEach(function (it) {
+      if (!it[1]) return;
+      var dt = document.createElement("dt"), dd = document.createElement("dd");
+      dt.textContent = it[0];
+      dd.textContent = it[1];
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    });
+  }
+  /* Liga o botao [data-wa-send]: com numero confiavel monta o wa.me com a mensagem; sem, some (fica o copiar). */
+  function ligaWhatsApp(a, msg) {
+    if (D.wa) {
+      a.href = "https://wa.me/" + D.wa + "?text=" + encodeURIComponent(msg);
+      a.hidden = false;
+    } else {
+      a.hidden = true;
+    }
+  }
+
+  /* mascara (11) 98765-4321 */
+  function mascaraWa(input) {
+    input.addEventListener("input", function () {
+      var d = input.value.replace(/\D/g, "").slice(0, 11), out = d;
+      if (d.length > 2) out = "(" + d.slice(0, 2) + ") " + d.slice(2);
+      if (d.length > 7) out = "(" + d.slice(0, 2) + ") " + d.slice(2, d.length - 4) + "-" + d.slice(-4);
+      input.value = out;
+    });
+  }
+  var waValido = function (v) { var n = v.replace(/\D/g, "").length; return n >= 10 && n <= 11; };
+
+  function rolarAte(sel) {
+    var el = $(sel);
+    if (el) el.scrollIntoView({ behavior: reduz ? "auto" : "smooth", block: "start" });
+  }
+
+  /* ---------- copiar ---------- */
+  function copiar(texto, botao) {
+    var ok = function () {
+      var orig = botao.textContent;
+      botao.textContent = "Copiado!";
+      setTimeout(function () { botao.textContent = orig; }, 1600);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(texto).then(ok, function () { copiaAntiga(texto); ok(); });
+    } else { copiaAntiga(texto); ok(); }
+  }
+  function copiaAntiga(texto) {
+    var t = document.createElement("textarea");
+    t.value = texto;
+    t.setAttribute("readonly", "");
+    t.style.position = "fixed";
+    t.style.opacity = "0";
+    document.body.appendChild(t);
+    t.select();
+    try { document.execCommand("copy"); } catch (e) { /* sem clipboard: o usuario copia na mao */ }
+    document.body.removeChild(t);
+  }
+  /* [data-copy="msg"] copia a mensagem pronta; [data-copy="wa"] copia o WhatsApp do negocio */
+  $$("[data-copy]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var msg = $("[data-msg]");
+      copiar(b.getAttribute("data-copy") === "msg" && msg ? msg.value : (D.waDisplay || D.wa), b);
+    });
+  });
+
+  /* ---------- barra fixa mobile: some com o agendamento na tela ---------- */
+  var bar = $("[data-mbar]");
+  if (bar && "IntersectionObserver" in window && $("#agendar")) {
+    new IntersectionObserver(function (entries) {
+      bar.classList.toggle("hide", entries[0].isIntersecting);
+    }, { threshold: 0.15 }).observe($("#agendar"));
+  }
+
+  return {
+    C: C, D: D, DIAS: DIAS, DIAS_LONGO: DIAS_LONGO, $: $, $$: $$,
+    toMin: toMin, hhmm: hhmm, ddmm: ddmm, semHora: semHora, brl: brl, diaHora: diaHora,
+    isOcupado: isOcupado, horarios: horarios, livres: livres, livresSemana: livresSemana,
+    primeiroDiaLivre: primeiroDiaLivre, proximosDias: proximosDias,
+    status: status, pintaStatus: pintaStatus, renderDias: renderDias, renderHorarios: renderHorarios,
+    passoDiaHora: passoDiaHora, Passos: Passos, preencheResumo: preencheResumo, ligaWhatsApp: ligaWhatsApp,
+    mascaraWa: mascaraWa, waValido: waValido, rolarAte: rolarAte, copiar: copiar
+  };
+})();
+/* Layout mallu (barbearia, odontologia): servico (cartoes + modal) e dia/horario alimentam o painel do
+   hero, os passos de "Como funciona", o resumo e o link do WhatsApp. Mais as transicoes do layout: header
+   que vira vidro, reveal ao entrar na tela, barra de ocupacao contando e passos acendendo em sequencia.
+   Preco 0 aparece como "Grátis". Estetica: le categorias/avaliacao (min -> duracao), abas, quiz de
+   queixas e pacote no modal, tudo opcional pela marcacao. Usa window.Agenda. */
+(function () {
+  "use strict";
+  var A = window.Agenda, C = A.C, D = A.D, $ = A.$, $$ = A.$$;
+  var DUR_PADRAO = 40;
+  var reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* estetica: avaliacao + servicos das categorias viram uma lista so; a avaliacao comeca escolhida */
+  if (!C.servicos && C.categorias) {
+    var av = C.avaliacao;
+    C.servicos = (av ? [{ id: av.id, nome: av.nome, preco: av.preco, duracao: av.min, inicial: true,
+      itens: ["Conversa sobre o que você busca", "Avaliação individual", "Protocolo indicado para você"],
+      pacote: "O valor é abatido do procedimento" }] : []);
+    C.categorias.forEach(function (c) {
+      c.servicos.forEach(function (s) {
+        C.servicos.push({ id: s.id, nome: s.nome, preco: s.preco, duracao: s.min, itens: s.itens, pacote: s.pacote || "", destaque: s.destaque });
+      });
+    });
+  }
+
+  var destaque = C.servicos.filter(function (s) { return s.inicial; })[0] ||
+    C.servicos.filter(function (s) { return s.destaque; })[0] || C.servicos[0];
+  var estado = { servico: destaque.id, dia: null, hora: null, queixas: [] };
+  var porId = function (id) { return C.servicos.filter(function (s) { return s.id === id; })[0]; };
+  var servico = function () { return porId(estado.servico) || destaque; };
+  var dur = function () { return servico().duracao; };
+  var preco = function (c) { return c ? A.brl(c) : "Grátis"; };
+
+  function rotuloDia(d) {
+    if (!d) return "a escolher";
+    var hoje = A.semHora(new Date());
+    var dd = String(d.getDate()).padStart(2, "0");
+    if (d.getTime() === hoje.getTime()) return "Hoje, " + A.DIAS[d.getDay()].toLowerCase() + " " + dd;
+    var nome = A.DIAS_LONGO[d.getDay()];
+    return nome.charAt(0).toUpperCase() + nome.slice(1) + ", " + dd;
+  }
+
+  /* horario escolhido continua se ainda couber o servico; senao, o primeiro livre do dia */
+  function ajustaHora() {
+    var livres = estado.dia ? A.livres(estado.dia, dur()) : [];
+    if (!livres.some(function (h) { return h.t === estado.hora; })) estado.hora = livres.length ? livres[0].t : null;
+  }
+
+  function set(chave, texto) { $$('[data-t="' + chave + '"]').forEach(function (n) { n.textContent = texto; }); }
+
+  function render() {
+    var s = servico(), hora = estado.hora != null ? A.hhmm(estado.hora) : "";
+    set("svc", s.nome);
+    set("dia", rotuloDia(estado.dia));
+    set("hora", hora || "a escolher");
+    set("quando", rotuloDia(estado.dia) + (hora ? " às " + hora : ""));
+    set("dur", s.duracao + " min");
+    set("preco", preco(s.preco));
+    set("resumo", [s.nome, rotuloDia(estado.dia), hora || "sem horário", preco(s.preco)].join(" · "));
+
+    var msg = "Olá, " + D.marca + "! Quero agendar " + s.nome + " para " + rotuloDia(estado.dia).toLowerCase() +
+      (hora ? " às " + hora : "") + "." + (s.preco ? " (" + A.brl(s.preco) + ")" : "") +
+      (estado.queixas.length ? " Queixas: " + estado.queixas.join(", ") + "." : "");
+    var href = D.wa ? "https://wa.me/" + D.wa + "?text=" + encodeURIComponent(msg) : D.fallback;
+    $$("[data-wa]").forEach(function (a) { a.href = href; });
+
+    $$("[data-pick]").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-pick") === s.id)); });
+    A.renderDias($("[data-days]"), estado.dia, function (d) { estado.dia = d; estado.hora = null; ajustaHora(); render(); });
+    A.renderHorarios($("[data-slots]"), estado.dia, dur(), estado.hora, function (t) { estado.hora = t; render(); });
+  }
+
+  function escolhe(id) { estado.servico = id; ajustaHora(); render(); }
+
+  /* ---------- modal do servico ---------- */
+  var modal = $("[data-modal]"), noModal = null, ultimoFoco = null;
+  function abreModal(b) {
+    var s = porId(b.getAttribute("data-pick"));
+    if (!s) return;
+    noModal = s.id;
+    $("[data-m-icon]").setAttribute("href", $("use", b.querySelector(".ico")).getAttribute("href"));
+    $("[data-m-title]").textContent = s.nome;
+    $("[data-m-preco]").textContent = preco(s.preco);
+    $("[data-m-dur]").textContent = s.duracao + " minutos";
+    var ul = $("[data-m-list]");
+    ul.innerHTML = "";
+    s.itens.forEach(function (t) {
+      var li = document.createElement("li");
+      li.innerHTML = '<svg><use href="#i-check"/></svg>';
+      li.appendChild(document.createTextNode(t));
+      ul.appendChild(li);
+    });
+    var pac = $("[data-m-pacote]");
+    if (pac) { pac.textContent = s.pacote || ""; pac.hidden = !s.pacote; }
+    ultimoFoco = document.activeElement;
+    modal.classList.add("open");
+    document.body.classList.add("lock");
+    $(".x", modal).focus();
+  }
+  function fechaModal() {
+    modal.classList.remove("open");
+    document.body.classList.remove("lock");
+    if (ultimoFoco) ultimoFoco.focus();
+  }
+  $$("[data-pick]").forEach(function (b) {
+    b.addEventListener("click", function () { escolhe(b.getAttribute("data-pick")); abreModal(b); });
+  });
+  $$("[data-close]", modal).forEach(function (b) { b.addEventListener("click", fechaModal); });
+  $("[data-m-agendar]").addEventListener("click", function () {
+    if (noModal) escolhe(noModal);
+    fechaModal();
+    A.rolarAte("#agendar");
+  });
+  window.addEventListener("keydown", function (e) { if (e.key === "Escape" && modal.classList.contains("open")) fechaModal(); });
+
+  /* ---------- abas de categorias (opcional) ---------- */
+  var abas = $$("[data-tab]");
+  function abreAba(id) {
+    abas.forEach(function (t) {
+      var on = t.getAttribute("data-tab") === id;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+    });
+    $$("[data-tabpanel]").forEach(function (p) {
+      var on = p.getAttribute("data-tabpanel") === id;
+      p.hidden = !on;
+      if (on) $$(".reveal", p).forEach(function (el) { el.classList.add("in"); });
+    });
+  }
+  abas.forEach(function (t, i) {
+    t.addEventListener("click", function () { abreAba(t.getAttribute("data-tab")); });
+    t.addEventListener("keydown", function (e) {
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      var n = abas[(i + d + abas.length) % abas.length];
+      n.focus();
+      abreAba(n.getAttribute("data-tab"));
+    });
+  });
+  $$("[data-aba]").forEach(function (a) { a.addEventListener("click", function () { abreAba(a.getAttribute("data-aba")); }); });
+
+  /* ---------- quiz de queixas (opcional): ate 4 indicados, os mais citados primeiro ---------- */
+  var recs = $("[data-recs]");
+  function indicados() {
+    var conta = {}, ordem = [];
+    estado.queixas.forEach(function (q) {
+      (C.queixas[q] || []).forEach(function (id) {
+        if (!(id in conta)) { conta[id] = 0; ordem.push(id); }
+        conta[id]++;
+      });
+    });
+    return ordem.sort(function (a, b) { return conta[b] - conta[a] || ordem.indexOf(a) - ordem.indexOf(b); })
+      .slice(0, 4).map(porId).filter(Boolean);
+  }
+  function pintaQuiz() {
+    $$("[data-queixa]").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(estado.queixas.indexOf(b.getAttribute("data-queixa")) >= 0));
+    });
+    recs.innerHTML = "";
+    var lista = indicados();
+    if (!lista.length) {
+      var p = document.createElement("p");
+      p.className = "vazio";
+      p.textContent = "Nenhuma queixa escolhida ainda.";
+      recs.appendChild(p);
+    }
+    lista.forEach(function (s) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "rec";
+      b.innerHTML = "<span></span><b></b>";
+      b.firstChild.textContent = s.nome;
+      b.lastChild.textContent = preco(s.preco);
+      b.addEventListener("click", function () { escolhe(s.id); A.rolarAte("#agendar"); });
+      recs.appendChild(b);
+    });
+    var q = $("[data-quiz-agendar]");
+    if (q) q.disabled = !estado.queixas.length;
+  }
+  if (recs) {
+    $$("[data-queixa]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var q = b.getAttribute("data-queixa"), i = estado.queixas.indexOf(q);
+        if (i >= 0) estado.queixas.splice(i, 1); else estado.queixas.push(q);
+        pintaQuiz();
+        render();
+      });
+    });
+    var qa = $("[data-quiz-agendar]");
+    if (qa) qa.addEventListener("click", function () { escolhe(destaque.id); A.rolarAte("#agendar"); });
+    pintaQuiz();
+  }
+
+  /* ---------- header: transparente no topo, vidro ao rolar ---------- */
+  var topo = $("header.top");
+  var aoRolar = function () { topo.classList.toggle("scrolled", window.scrollY > 30); };
+  window.addEventListener("scroll", aoRolar, { passive: true });
+  aoRolar();
+
+  /* ---------- hero: status e ocupacao de hoje ---------- */
+  function ocupacao() {
+    var hoje = A.semHora(new Date()), lista = A.horarios(hoje, DUR_PADRAO);
+    if (!lista.length) return null;
+    var livres = lista.filter(function (h) { return h.livre; }).length;
+    return Math.round(100 * (lista.length - livres) / lista.length);
+  }
+  var ocupContou = false;
+  function contaOcupacao() {
+    var alvo = ocupacao(), el = $("[data-ocup]"), barra = $("[data-ocup-bar]");
+    if (alvo == null) { $("[data-ocup-texto]").textContent = "Hoje a casa não abre"; el.textContent = "–"; return; }
+    barra.style.width = alvo + "%";
+    if (reduz || ocupContou) { el.textContent = alvo + "%"; return; }
+    ocupContou = true;
+    var t0 = performance.now();
+    (function tick(t) {
+      var p = Math.min((t - t0) / 1400, 1);
+      el.textContent = Math.round(alvo * (1 - Math.pow(1 - p, 3))) + "%";
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  /* ---------- como funciona: passos acendem em sequencia ---------- */
+  var passos = $$(".fstep"), fill = $("[data-flow-fill]");
+  function rodaPassos() {
+    passos.forEach(function (s) { s.classList.remove("done"); });
+    fill.style.height = "0";
+    passos.forEach(function (s, i) {
+      setTimeout(function () {
+        s.classList.add("done");
+        fill.style.height = (s.offsetTop + s.offsetHeight / 2 - 18) + "px";
+      }, 600 + i * 700);
+    });
+  }
+
+  /* ---------- entrada ao aparecer na tela ---------- */
+  var alvos = $$(".reveal,[data-ocup],[data-flow]");
+  function entra(el) {
+    if (el.classList.contains("reveal")) el.classList.add("in");
+    if (el.hasAttribute("data-ocup")) contaOcupacao();
+    if (el.hasAttribute("data-flow")) { rodaPassos(); if (!reduz) setInterval(rodaPassos, 6000); }
+  }
+  if ("IntersectionObserver" in window && !reduz) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        entra(e.target);
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.2 });
+    alvos.forEach(function (el) { io.observe(el); });
+  } else {
+    alvos.forEach(entra);
+  }
+
+  function pintaHero() { A.pintaStatus(); }
+
+  estado.dia = A.primeiroDiaLivre(dur());
+  ajustaHora();
+  pintaHero();
+  render();
+  setInterval(function () { pintaHero(); if (ocupContou) contaOcupacao(); ajustaHora(); render(); }, 60000);
+})();
+</script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+import './config.js' // carrega o .env antes de ler DB_PATH
 import Database from 'better-sqlite3'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
@@ -22,3 +23,21 @@ db.pragma('journal_mode = WAL')
 db.pragma('foreign_keys = ON')
 
 db.exec(readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'))
+
+/**
+ * MIGRAÇÕES — mudanças no schema de um banco que JÁ EXISTE.
+ *
+ * "CREATE TABLE IF NOT EXISTS" não altera tabelas antigas: se a tabela
+ * já existe, nada acontece. Então coluna nova precisa de ALTER TABLE.
+ * Aqui conferimos as colunas atuais (PRAGMA table_info) e adicionamos
+ * só as que faltam — pode rodar quantas vezes quiser sem estragar nada.
+ */
+function addColumnIfMissing(table, column, type) {
+  const existe = db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column)
+  if (!existe) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`)
+    console.log(`Migração: coluna ${table}.${column} criada`)
+  }
+}
+
+addColumnIfMissing('characters', 'process', 'TEXT')

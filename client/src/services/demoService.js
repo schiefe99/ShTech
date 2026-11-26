@@ -5,5 +5,5 @@ import { demosSeed } from '../data/demos.seed'
 export const demoService = createService({
   key: 'demos',
   seed: demosSeed,
-  version: 2,
+  version: 4,
 })

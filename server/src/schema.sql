@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS characters (
   "order"     INTEGER NOT NULL DEFAULT 0,
   tagline     TEXT,
   intro       TEXT,
-  benefits    TEXT          -- JSON: [{ title, text }]
+  benefits    TEXT,         -- JSON: [{ title, text }]
+  process     TEXT          -- JSON: [{ time, title, text }] (etapas do "Como funciona")
 );
 
 -- Falas de cada personagem. FOREIGN KEY liga ao personagem;

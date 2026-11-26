@@ -34,7 +34,7 @@ const WHEEL = {
 // leva qualquer ângulo para o intervalo -π..π
 const wrapAngle = (a) => a - Math.PI * 2 * Math.round(a / (Math.PI * 2))
 
-export default function CharacterCarousel({ characters, step, onSelect }) {
+export default function CharacterCarousel({ characters, step, onSelect, focusId = null, onEnter }) {
   const total = characters.length
   const angleStep = (Math.PI * 2) / total
   const activeIndex = mod(step, total)
@@ -83,6 +83,9 @@ export default function CharacterCarousel({ characters, step, onSelect }) {
           <TvRobot
             character={character}
             active={i === activeIndex}
+            focus={character.id === focusId}
+            // botão "entrar na TV" só no robô da frente
+            onEnter={i === activeIndex && onEnter ? () => onEnter(character) : undefined}
             onClick={(e) => {
               e.stopPropagation() // só o robô mais da frente recebe o clique
               selectByIndex(i)

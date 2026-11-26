@@ -1,4 +1,6 @@
 import { Router } from 'express'
+import { requireAdmin } from '../auth.js'
+import { tooLong } from '../security.js'
 
 /**
  * FÁBRICA DE ROTAS — gera as 5 rotas REST para qualquer repositório.
@@ -13,8 +15,12 @@ import { Router } from 'express'
  * estes campos". Nosso update é parcial, então PATCH é o verbo certo.
  *
  * required: campos obrigatórios (validados no POST; no PATCH, só se vierem)
+ * rule:     validação extra do recurso (ex.: links seguros) → security.js
+ *
+ * SEGURANÇA: ler (GET) é público, o site precisa. Gravar (POST, PATCH,
+ * DELETE) exige o token do admin → requireAdmin responde 401 sem ele.
  */
-export function createCrudRouter(repo, { required = [] } = {}) {
+export function createCrudRouter(repo, { required = [], rule = () => null } = {}) {
   const router = Router()
 
   // devolve a mensagem de erro, ou null se estiver tudo certo
@@ -28,7 +34,7 @@ export function createCrudRouter(repo, { required = [] } = {}) {
         return `O campo "${campo}" é obrigatório`
       }
     }
-    return null
+    return tooLong(body) ?? rule(body)
   }
 
   router.get('/', (req, res) => {
@@ -41,7 +47,7 @@ export function createCrudRouter(repo, { required = [] } = {}) {
     res.json(item)
   })
 
-  router.post('/', (req, res) => {
+  router.post('/', requireAdmin, (req, res) => {
     const erro = validate(req.body, { partial: false })
     if (erro) return res.status(400).json({ error: erro })
     if (req.body.id && repo.get(req.body.id)) {
@@ -50,7 +56,7 @@ export function createCrudRouter(repo, { required = [] } = {}) {
     res.status(201).json(repo.create(req.body))
   })
 
-  router.patch('/:id', (req, res) => {
+  router.patch('/:id', requireAdmin, (req, res) => {
     const erro = validate(req.body, { partial: true })
     if (erro) return res.status(400).json({ error: erro })
     const item = repo.update(req.params.id, req.body)
@@ -58,7 +64,7 @@ export function createCrudRouter(repo, { required = [] } = {}) {
     res.json(item)
   })
 
-  router.delete('/:id', (req, res) => {
+  router.delete('/:id', requireAdmin, (req, res) => {
     if (!repo.remove(req.params.id)) return res.status(404).json({ error: 'Não encontrado' })
     res.status(204).end()
   })

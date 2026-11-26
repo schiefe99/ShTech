@@ -1,6 +1,6 @@
 import { Field, TextInput, TextArea, ColorInput, IconButton, Button, FormSection } from './ui'
 import LinesEditor from './LinesEditor'
-import { updateAt, removeAt, slugify } from '../../utils/listOps'
+import { updateAt, removeAt, move, slugify } from '../../utils/listOps'
 
 /**
  * Formulário de PERSONAGEM.
@@ -10,6 +10,7 @@ import { updateAt, removeAt, slugify } from '../../utils/listOps'
 export default function CharacterForm({ draft, setDraft, isNew }) {
   const set = (field) => (value) => setDraft((d) => ({ ...d, [field]: value }))
   const benefits = draft.benefits ?? []
+  const steps = draft.process ?? [] // etapas do "Como funciona"
 
   return (
     <>
@@ -65,6 +66,31 @@ export default function CharacterForm({ draft, setDraft, isNew }) {
             </Button>
           </div>
         </Field>
+      </FormSection>
+
+      <FormSection title="Como funciona (etapas)">
+        <p className="text-xs text-neutral-500">Vazio = usa as etapas padrão do site.</p>
+        {steps.map((p, i) => (
+          <div key={i} className="flex gap-2 rounded-xl border border-white/10 p-3">
+            <div className="flex-1 space-y-2">
+              <div className="grid grid-cols-[1fr_2fr] gap-2">
+                <TextInput value={p.time} onChange={(time) => set('process')(updateAt(steps, i, { time }))} placeholder="Até 36h" />
+                <TextInput value={p.title} onChange={(title) => set('process')(updateAt(steps, i, { title }))} placeholder="Etapa" />
+              </div>
+              <TextArea value={p.text} onChange={(text) => set('process')(updateAt(steps, i, { text }))} rows={2} placeholder="O que acontece nesta etapa" />
+            </div>
+            <div className="flex flex-col">
+              <IconButton label="Subir" onClick={() => set('process')(move(steps, i, -1))} disabled={i === 0}>↑</IconButton>
+              <IconButton label="Descer" onClick={() => set('process')(move(steps, i, 1))} disabled={i === steps.length - 1}>↓</IconButton>
+              <IconButton label="Remover etapa" onClick={() => set('process')(removeAt(steps, i))}>✕</IconButton>
+            </div>
+          </div>
+        ))}
+        {steps.length < 5 && (
+          <Button variant="ghost" onClick={() => set('process')([...steps, { time: '', title: '', text: '' }])}>
+            + Adicionar etapa
+          </Button>
+        )}
       </FormSection>
 
       <FormSection title="Conversa">
